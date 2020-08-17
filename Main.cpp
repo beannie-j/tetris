@@ -2,6 +2,7 @@
 #include <array>
 #include <iostream>
 #include <cstdlib>
+#include <typeinfo>
 
 // cw - clockwise
 enum class RotationState : int {
@@ -38,7 +39,7 @@ TetrominoType GetTypeFromNumeration(int number)
 // static variables
 constexpr static float block_size = 40.f;
 constexpr static int s_GameBoardWidth = 10;
-constexpr static int s_GameBoardHeight = 16;
+constexpr static int s_GameBoardHeight = 17;
 
 constexpr static int width = 30 * block_size;
 constexpr static int height = 30 * block_size;
@@ -48,6 +49,7 @@ const std::array<char, 7> types = { 'I', 'O', 'T', 'S', 'Z', 'J', 'L' };
 float cell_size = 1.0f;
 
 static std::array<int, s_GameBoardWidth* s_GameBoardHeight> s_PlayingArea;
+static bool s_GameOver = false;
 
 
 class Tetromino {
@@ -64,7 +66,7 @@ public:
 
     Tetromino(TetrominoType type);
     void Draw(sf::RenderWindow& window);
-    void MoveDown(float dy);
+    bool MoveDown(float dy);
     bool CheckBounds();
     void Rotate_HardCoded(RotationState rotation_state);
 
@@ -362,11 +364,35 @@ void Tetromino::Rotate_HardCoded(RotationState rotation_state)
     }
 }
 
-void Tetromino::MoveDown(float dy)
+bool Tetromino::MoveDown(float dy)
 {
-    if (CheckBounds() && !m_landed) posY += dy;
+    if (CheckBounds())
+    {
+        posY += dy;
+        //std::cout << "Moving down " << dy << std::endl;
+        return true;
+    }
+    this->m_landed = true;
+    return false;
 }
 
+static bool CheckGameOver(Tetromino curr)
+{
+    // it should be game over if there is no where to fit the tetromino.
+    for (int y = 0; y < curr.m_size; y++)
+    {
+        for (int x = 0; x < curr.m_size; x++)
+        {
+            if (curr.m_arr[y][x] == 0) continue;
+
+            if (y + curr.posY <= 1 && curr.m_landed)
+            {
+                s_GameOver = true;
+            }
+        }
+    }
+    return true;
+}
 
 bool Tetromino::CheckBounds()
 {
@@ -384,16 +410,16 @@ bool Tetromino::CheckBounds()
             }
 
             int potentialPosition = (x + posX) + (y + posY + 2) * s_GameBoardWidth;
+           // std::cout << " position : check bounds" << x + posX << " , " << y + posY << " m_landed:";
+          
 
             if (s_PlayingArea[potentialPosition])
             {
-                std::cout << "potential position" << x + posX << " , " << y + posY + 1 << std::endl;
                 m_landed = true;
+
                 return false;
             }
-            std::cout <<"**** x " << x + posX << " , y " << y + posY << std::endl;
 
-            //world[cy + y][cx + x]
         }
     }
     return true;
@@ -475,6 +501,39 @@ static void CommitBlock(const Tetromino& tetromino)
 
 }
 
+static void ClearRow(sf::RenderWindow& window)
+{
+    for (int y = 0; y < s_GameBoardHeight; y++)
+    {
+        int count = 0;
+        for (int x = 0; x < s_GameBoardWidth; x++)
+        {
+            int block = s_PlayingArea[x + y * s_GameBoardWidth];
+            if (block) count += 1;
+            if (count == s_GameBoardWidth)
+            {
+                std::cout << " y "<< y << std::endl;
+                for (int x = 0; x < s_GameBoardWidth; x++) {
+                    s_PlayingArea[x + y * s_GameBoardWidth] = s_PlayingArea[x + (y - 1) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 1) * s_GameBoardWidth] = s_PlayingArea[x + (y - 2) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 2) * s_GameBoardWidth] = s_PlayingArea[x + (y - 3) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 3) * s_GameBoardWidth] = s_PlayingArea[x + (y - 4) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 4) * s_GameBoardWidth] = s_PlayingArea[x + (y - 5) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 5) * s_GameBoardWidth] = s_PlayingArea[x + (y - 6) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 6) * s_GameBoardWidth] = s_PlayingArea[x + (y - 7) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 7) * s_GameBoardWidth] = s_PlayingArea[x + (y - 8) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 8) * s_GameBoardWidth] = s_PlayingArea[x + (y - 9) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 9) * s_GameBoardWidth] = s_PlayingArea[x + (y - 10) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 10) * s_GameBoardWidth] = s_PlayingArea[x + (y - 11) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 11) * s_GameBoardWidth] = s_PlayingArea[x + (y - 12) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 12) * s_GameBoardWidth] = s_PlayingArea[x + (y - 13) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 13) * s_GameBoardWidth] = s_PlayingArea[x + (y - 14) * s_GameBoardWidth];
+                }    
+            }
+        }
+    }
+}
+
 static void DrawGameBoard(sf::RenderWindow& window)
 {
     sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
@@ -493,6 +552,7 @@ static void DrawGameBoard(sf::RenderWindow& window)
             int block = s_PlayingArea[x + y * s_GameBoardWidth];
             if (block)
             {
+                //colours if the s_PlayingArea == 2
                 rect.setPosition(sf::Vector2f(cx, cy));
                 rect.setOutlineThickness(3);
                 rect.setFillColor(s_Colors[block]);
@@ -506,7 +566,6 @@ static void DrawGameBoard(sf::RenderWindow& window)
                 rect.setFillColor(sf::Color::Black);
                 rect.setOutlineColor(sf::Color::White);
 
-
                 window.draw(rect);
 
                 text.setPosition(sf::Vector2f(cx, cy));
@@ -516,6 +575,18 @@ static void DrawGameBoard(sf::RenderWindow& window)
             }
         }
     }
+}
+
+static void DrawPoints(sf::RenderWindow& window, int points)
+{
+    sf::Text text;
+    text.setFont(s_Font);
+    text.setFillColor(sf::Color::White);
+    text.setCharacterSize(30);
+    text.setPosition(900, 50);
+    std::string string = "POINTS : " + std::to_string(points);
+    text.setString(string);
+    window.draw(text);
 }
 
 
@@ -534,6 +605,8 @@ int main()
     sf::Clock clock;
 
     float last_time = clock.getElapsedTime().asSeconds();
+
+    int points = 0;
 
     while (window.isOpen())
     {
@@ -572,7 +645,7 @@ int main()
 
                 if (event.key.code == sf::Keyboard::Space)
                 {
-                    // land the tetromino
+                    
                 }
             }
         }
@@ -581,22 +654,42 @@ int main()
 
         DrawGameBoard(window);
         current_tetromino.Draw(window);
+        ClearRow(window);
+        DrawPoints(window, points); 
+        CheckGameOver(current_tetromino);
+
 
         float now = clock.getElapsedTime().asSeconds();
-        if (now - last_time >= 2.0f)
+        if (now - last_time >= 0.7f)
         {
             current_tetromino.MoveDown(cell_size);
             last_time = now;
         } 
 
-        if (current_tetromino.m_landed)
+        if (current_tetromino.m_landed && !s_GameOver)
         {
+            ++points;
             CommitBlock(current_tetromino);
-            current_tetromino = CreateTetromino();
+            if (current_tetromino.posY <= 0 && current_tetromino.m_landed) s_GameOver = true;
+            if (!s_GameOver) current_tetromino = CreateTetromino();
         }
 
+        if (s_GameOver)
+        {
+            sf::Text text;
+            text.setFont(s_Font);
+            text.setFillColor(sf::Color::Red);
+            text.setCharacterSize(70);
+            text.setPosition(450, 50);
+            std::string string = "Game Over";
+            text.setString(string);
+            window.draw(text);
+        }
         window.display();
+
     }
+    
+    
 
     return 0;
 }
