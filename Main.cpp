@@ -39,7 +39,7 @@ TetrominoType GetTypeFromNumeration(int number)
 // static variables
 constexpr static float block_size = 40.f;
 constexpr static int s_GameBoardWidth = 10;
-constexpr static int s_GameBoardHeight = 17;
+constexpr static int s_GameBoardHeight = 16;
 
 constexpr static int width = 30 * block_size;
 constexpr static int height = 30 * block_size;
@@ -103,7 +103,7 @@ Tetromino::Tetromino(TetrominoType type)
     switch (m_type) {
     case TetrominoType::I:
         m_arr = { { 
-            {0,0,0,0}, {1,1,1,1}, {0,0,0,0}, {0,0,0,0} } };
+            {1,1,1,1}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0} } };
         m_rotation_state = RotationState::cw0;
         m_color = sf::Color(0, 255, 255);
         break;
@@ -369,7 +369,6 @@ bool Tetromino::MoveDown(float dy)
     if (CheckBounds())
     {
         posY += dy;
-        //std::cout << "Moving down " << dy << std::endl;
         return true;
     }
     this->m_landed = true;
@@ -384,9 +383,10 @@ static bool CheckGameOver(Tetromino curr)
         for (int x = 0; x < curr.m_size; x++)
         {
             if (curr.m_arr[y][x] == 0) continue;
-
-            if (y + curr.posY <= 1 && curr.m_landed)
+            int pos = (x + curr.posX) + (y + curr.posY) * s_GameBoardWidth;
+            if (s_PlayingArea[pos] && curr.m_landed)
             {
+                //std::cout << "Game over " << std::endl;
                 s_GameOver = true;
             }
         }
@@ -411,15 +411,11 @@ bool Tetromino::CheckBounds()
 
             int potentialPosition = (x + posX) + (y + posY + 2) * s_GameBoardWidth;
            // std::cout << " position : check bounds" << x + posX << " , " << y + posY << " m_landed:";
-          
-
             if (s_PlayingArea[potentialPosition])
             {
                 m_landed = true;
-
                 return false;
             }
-
         }
     }
     return true;
@@ -461,10 +457,10 @@ void Tetromino::Draw(sf::RenderWindow& window)
 
 Tetromino CreateTetromino()
 {
+    std::cout << "Creating new" << std::endl;
     int random = rand() % 7;
     TetrominoType type = GetTypeFromNumeration(random);
-    Tetromino tetromino(TetrominoType::I);
-
+    Tetromino tetromino(type);
     return tetromino;
 }
 
@@ -692,6 +688,7 @@ int main()
             std::string string = "Game Over";
             text.setString(string);
             window.draw(text);
+            current_tetromino.m_color = sf::Color::Transparent;
         }
         window.display();
 
