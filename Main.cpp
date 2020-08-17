@@ -463,7 +463,7 @@ Tetromino CreateTetromino()
 {
     int random = rand() % 7;
     TetrominoType type = GetTypeFromNumeration(random);
-    Tetromino tetromino(type);
+    Tetromino tetromino(TetrominoType::I);
 
     return tetromino;
 }
@@ -514,7 +514,15 @@ static void ClearRow(sf::RenderWindow& window)
             {
                 std::cout << " y "<< y << std::endl;
                 for (int x = 0; x < s_GameBoardWidth; x++) {
-                    s_PlayingArea[x + y * s_GameBoardWidth] = s_PlayingArea[x + (y - 1) * s_GameBoardWidth];
+                    int i = y;
+                    int j = 0;
+                    while (j < i)
+                    {
+                        s_PlayingArea[x + (y - j) * s_GameBoardWidth] = s_PlayingArea[x + (y -j -1) * s_GameBoardWidth];
+                        j++;
+
+                    }
+                    /*s_PlayingArea[x + y * s_GameBoardWidth] = s_PlayingArea[x + (y - 1) * s_GameBoardWidth];
                     s_PlayingArea[x + (y - 1) * s_GameBoardWidth] = s_PlayingArea[x + (y - 2) * s_GameBoardWidth];
                     s_PlayingArea[x + (y - 2) * s_GameBoardWidth] = s_PlayingArea[x + (y - 3) * s_GameBoardWidth];
                     s_PlayingArea[x + (y - 3) * s_GameBoardWidth] = s_PlayingArea[x + (y - 4) * s_GameBoardWidth];
@@ -527,7 +535,7 @@ static void ClearRow(sf::RenderWindow& window)
                     s_PlayingArea[x + (y - 10) * s_GameBoardWidth] = s_PlayingArea[x + (y - 11) * s_GameBoardWidth];
                     s_PlayingArea[x + (y - 11) * s_GameBoardWidth] = s_PlayingArea[x + (y - 12) * s_GameBoardWidth];
                     s_PlayingArea[x + (y - 12) * s_GameBoardWidth] = s_PlayingArea[x + (y - 13) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 13) * s_GameBoardWidth] = s_PlayingArea[x + (y - 14) * s_GameBoardWidth];
+                    s_PlayingArea[x + (y - 13) * s_GameBoardWidth] = s_PlayingArea[x + (y - 14) * s_GameBoardWidth];*/
                 }    
             }
         }
