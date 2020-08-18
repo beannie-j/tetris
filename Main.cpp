@@ -7,7 +7,6 @@
 
 #include "Tetromino.h"
 
-
 int GetColorInt(Tetromino tetromino)
 {
     if (tetromino.m_type == TetrominoType::I) return 1;
@@ -52,8 +51,7 @@ static bool CheckGameOver(Tetromino curr)
     return true;
 }
 
-
-Tetromino CreateTetromino()
+static Tetromino CreateTetromino()
 {
     std::cout << "Creating new" << std::endl;
     int random = rand() % 7;
@@ -115,20 +113,6 @@ static void ClearRow(sf::RenderWindow& window)
                         j++;
 
                     }
-                    /*s_PlayingArea[x + y * s_GameBoardWidth] = s_PlayingArea[x + (y - 1) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 1) * s_GameBoardWidth] = s_PlayingArea[x + (y - 2) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 2) * s_GameBoardWidth] = s_PlayingArea[x + (y - 3) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 3) * s_GameBoardWidth] = s_PlayingArea[x + (y - 4) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 4) * s_GameBoardWidth] = s_PlayingArea[x + (y - 5) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 5) * s_GameBoardWidth] = s_PlayingArea[x + (y - 6) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 6) * s_GameBoardWidth] = s_PlayingArea[x + (y - 7) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 7) * s_GameBoardWidth] = s_PlayingArea[x + (y - 8) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 8) * s_GameBoardWidth] = s_PlayingArea[x + (y - 9) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 9) * s_GameBoardWidth] = s_PlayingArea[x + (y - 10) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 10) * s_GameBoardWidth] = s_PlayingArea[x + (y - 11) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 11) * s_GameBoardWidth] = s_PlayingArea[x + (y - 12) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 12) * s_GameBoardWidth] = s_PlayingArea[x + (y - 13) * s_GameBoardWidth];
-                    s_PlayingArea[x + (y - 13) * s_GameBoardWidth] = s_PlayingArea[x + (y - 14) * s_GameBoardWidth];*/
                 }    
             }
         }

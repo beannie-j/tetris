@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <typeinfo>
-#include <SFML/Graphics.hpp>
 
 Tetromino::Tetromino(TetrominoType type)
     : m_type(type)
