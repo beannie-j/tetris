@@ -1,4 +1,3 @@
-#include "Globals.h"
 #include "Tetromino.h"
 #include <iostream>
 #include <cstdlib>
@@ -290,16 +289,16 @@ bool Tetromino::CheckBounds()
         {
             if (m_arr[y][x] == 0) continue;
 
-            if ((posX + x) * block_size < 0 || (posX + x) * block_size >= ((s_GameBoardWidth)*block_size) - cell_size) return false;
-            if ((y + posY) * block_size >= ((s_GameBoardHeight - 1) * block_size) - (block_size))
+            if ((posX + x) * block_size < 0 || (posX + x) * block_size >= ((GameBoard::Width)*block_size) - cell_size) return false;
+            if ((y + posY) * block_size >= ((GameBoard::Height - 1) * block_size) - (block_size))
             {
                 m_landed = true;
                 return false;
             }
 
-            int potentialPosition = (x + posX) + (y + posY + 2) * s_GameBoardWidth;
+            int potentialPosition = (x + posX) + (y + posY + 2) * GameBoard::Width;
             // std::cout << " position : check bounds" << x + posX << " , " << y + posY << " m_landed:";
-            if (s_PlayingArea[potentialPosition])
+            if (GameBoard::PlayingArea[potentialPosition])
             {
                 m_landed = true;
                 return false;

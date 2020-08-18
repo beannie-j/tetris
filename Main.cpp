@@ -3,9 +3,11 @@
 #include <iostream>
 #include <cstdlib>
 #include <typeinfo>
-#include "Globals.h"
 
 #include "Tetromino.h"
+
+
+
 
 int GetColorInt(Tetromino tetromino)
 {
@@ -40,8 +42,8 @@ static bool CheckGameOver(Tetromino curr)
         for (int x = 0; x < curr.m_size; x++)
         {
             if (curr.m_arr[y][x] == 0) continue;
-            int pos = (x + curr.posX) + (y + curr.posY) * s_GameBoardWidth;
-            if (s_PlayingArea[pos] && curr.m_landed)
+            int pos = (x + curr.posX) + (y + curr.posY) * GameBoard::Width;
+            if (GameBoard::PlayingArea[pos] && curr.m_landed)
             {
                 //std::cout << "Game over " << std::endl;
                 s_GameOver = true;
@@ -75,16 +77,16 @@ static void CommitBlock(const Tetromino& tetromino)
 
                 int xc = txc + x;
                 int yc = tyc + y;
-                int pos = xc + yc  * s_GameBoardWidth;
+                int pos = xc + yc  * GameBoard::Width;
 
-                if (yc + 1 > s_GameBoardHeight)
+                if (yc + 1 > GameBoard::Height)
                 {
                     std::cout << "[WARNING] : gameborad height out of bounds" << std::endl;
                     continue;
                 }
           
                 // why only 2 works?? rest paints empty colour.
-                s_PlayingArea[pos] = 2;
+                GameBoard::PlayingArea[pos] = 3;
                 
             }
         }
@@ -94,22 +96,22 @@ static void CommitBlock(const Tetromino& tetromino)
 
 static void ClearRow(sf::RenderWindow& window)
 {
-    for (int y = 0; y < s_GameBoardHeight; y++)
+    for (int y = 0; y < GameBoard::Height; y++)
     {
         int count = 0;
-        for (int x = 0; x < s_GameBoardWidth; x++)
+        for (int x = 0; x < GameBoard::Width; x++)
         {
-            int block = s_PlayingArea[x + y * s_GameBoardWidth];
+            int block = GameBoard::PlayingArea[x + y * GameBoard::Width];
             if (block) count += 1;
-            if (count == s_GameBoardWidth)
+            if (count == GameBoard::Width)
             {
                 std::cout << " y "<< y << std::endl;
-                for (int x = 0; x < s_GameBoardWidth; x++) {
+                for (int x = 0; x < GameBoard::Width; x++) {
                     int i = y;
                     int j = 0;
                     while (j < i)
                     {
-                        s_PlayingArea[x + (y - j) * s_GameBoardWidth] = s_PlayingArea[x + (y -j -1) * s_GameBoardWidth];
+                        GameBoard::PlayingArea[x + (y - j) * GameBoard::Width] = GameBoard::PlayingArea[x + (y -j -1) * GameBoard::Width];
                         j++;
 
                     }
@@ -121,20 +123,20 @@ static void ClearRow(sf::RenderWindow& window)
 
 static void DrawGameBoard(sf::RenderWindow& window)
 {
-    sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
+    sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
 
     sf::Text text;
     text.setFont(s_Font);
     text.setFillColor(sf::Color(255, 255, 255));
     text.setCharacterSize(14);
 
-    for (int y = 0; y < s_GameBoardHeight; y++)
+    for (int y = 0; y < GameBoard::Height; y++)
     {
-        for (int x = 0; x < s_GameBoardWidth; x++)
+        for (int x = 0; x < GameBoard::Width; x++)
         {
-            float cx = x * block_size;
-            float cy = y * block_size;
-            int block = s_PlayingArea[x + y * s_GameBoardWidth];
+            float cx = x * Tetromino::block_size;
+            float cy = y * Tetromino::block_size;
+            int block = GameBoard::PlayingArea[x + y * GameBoard::Width];
             if (block)
             {
                 //colours if the s_PlayingArea == 2
@@ -181,9 +183,12 @@ int main()
 
     s_Font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
 
-    sf::RenderWindow window(sf::VideoMode(width, height), "Tetris");
+    int Window_Width = 30 * Tetromino::block_size;
+    int Window_Height = 30 * Tetromino::block_size;
 
-    memset(s_PlayingArea.data(), 0, sizeof(s_PlayingArea));
+    sf::RenderWindow window(sf::VideoMode(Window_Width, Window_Height), "Tetris");
+
+    memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
     Tetromino current_tetromino = CreateTetromino();
 

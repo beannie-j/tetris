@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
+#include "Game.h"
 
 enum class RotationState : int {
     cw0 = 0, cw90 = 1, cw180 = 2, cw270 = 3
@@ -41,7 +41,7 @@ public:
     bool MoveDown(float dy);
     bool CheckBounds();
     void Rotate_HardCoded(RotationState rotation_state);
-
+    static constexpr float block_size = 40.f;
 
 private:
 
