@@ -6,18 +6,15 @@
 
 #include "Tetromino.h"
 
-
-
-
 int GetColorInt(Tetromino tetromino)
 {
-    if (tetromino.m_type == TetrominoType::I) return 1;
-    if (tetromino.m_type == TetrominoType::O) return 2;
-    if (tetromino.m_type == TetrominoType::T) return 3;
-    if (tetromino.m_type == TetrominoType::S) return 4;
-    if (tetromino.m_type == TetrominoType::Z) return 5;
-    if (tetromino.m_type == TetrominoType::J) return 6;
-    if (tetromino.m_type == TetrominoType::L) return 7;
+    if (tetromino.m_type == TetrominoType::I) return 2;
+    if (tetromino.m_type == TetrominoType::O) return 3;
+    if (tetromino.m_type == TetrominoType::T) return 4;
+    if (tetromino.m_type == TetrominoType::S) return 5;
+    if (tetromino.m_type == TetrominoType::Z) return 6;
+    if (tetromino.m_type == TetrominoType::J) return 7;
+    if (tetromino.m_type == TetrominoType::L) return 8;
 
 }
 
@@ -36,7 +33,6 @@ TetrominoType GetTypeFromNumeration(int number)
 
 static bool CheckGameOver(Tetromino curr)
 {
-    // it should be game over if there is no where to fit the tetromino.
     for (int y = 0; y < curr.m_size; y++)
     {
         for (int x = 0; x < curr.m_size; x++)
@@ -45,7 +41,6 @@ static bool CheckGameOver(Tetromino curr)
             int pos = (x + curr.posX) + (y + curr.posY) * GameBoard::Width;
             if (GameBoard::PlayingArea[pos] && curr.m_landed)
             {
-                //std::cout << "Game over " << std::endl;
                 s_GameOver = true;
             }
         }
@@ -85,8 +80,7 @@ static void CommitBlock(const Tetromino& tetromino)
                     continue;
                 }
           
-                // why only 2 works?? rest paints empty colour.
-                GameBoard::PlayingArea[pos] = 3;
+                GameBoard::PlayingArea[pos] = GetColorInt(tetromino);
                 
             }
         }
@@ -137,7 +131,7 @@ static void DrawGameBoard(sf::RenderWindow& window)
             float cx = x * Tetromino::block_size;
             float cy = y * Tetromino::block_size;
             int block = GameBoard::PlayingArea[x + y * GameBoard::Width];
-            if (block)
+            if (block >= 2)
             {
                 //colours if the s_PlayingArea == 2
                 rect.setPosition(sf::Vector2f(cx, cy));

@@ -16,14 +16,7 @@ enum class TetrominoType : int {
     L = 6,
     NumberOfTetrominoTypes
 };
-/*
 
-extern std::array<int, s_GameBoardWidth* s_GameBoardHeight> s_PlayingArea;
-extern bool s_GameOver;
-extern sf::Font s_Font;
-
-extern sf::Color s_Colors[7];
-*/
 class Tetromino {
 public:
     TetrominoType m_type;

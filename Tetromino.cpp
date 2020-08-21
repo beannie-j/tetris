@@ -11,12 +11,12 @@ Tetromino::Tetromino(TetrominoType type)
         m_arr = { {
             {1,1,1,1}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0} } };
         m_rotation_state = RotationState::cw0;
-        m_color = sf::Color(0, 255, 255);
+        m_color = sf::Color(59, 237, 237);
         break;
     case TetrominoType::O:
         m_arr = { { {1,1,0,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0} } };
         m_rotation_state = RotationState::cw0;
-        m_color = sf::Color::Yellow;
+        m_color = sf::Color(237, 234, 59);
         break;
     case TetrominoType::T:
         m_arr = { {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}} };
@@ -26,17 +26,17 @@ Tetromino::Tetromino(TetrominoType type)
     case TetrominoType::S:
         m_arr = { {{0,1,1,0}, {1,1,0,0}, {0,0,0,0}, {0,0,0,0}} };
         m_rotation_state = RotationState::cw0;
-        m_color = sf::Color::Green;
+        m_color = sf::Color(53, 232, 68);
         break;
     case TetrominoType::Z:
         m_arr = { {{1,1,0,0}, {0,1,1,0}, {0,0,0,0}, {0,0,0,0}} };
         m_rotation_state = RotationState::cw0;
-        m_color = sf::Color::Red;
+        m_color = sf::Color(232, 70, 49);
         break;
     case TetrominoType::J:
         m_arr = { {{1,0,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}} };
         m_rotation_state = RotationState::cw0;
-        m_color = sf::Color::Blue;
+        m_color = sf::Color(54, 86, 227);
         break;
     case TetrominoType::L:
         m_arr = { {{0,0,1,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}} };
