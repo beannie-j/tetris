@@ -3,21 +3,30 @@
 
 Menu::Menu(float width, float height, sf::Font font)
 {
+	int size = m_Menu.size();
 	m_Font = font;
-	m_MenuList[0] = "Play Tetris";
-	m_MenuList[1] = "Options";
-	m_MenuList[2] = "View Leaderboard";
-	m_MenuList[3] = "Exit";
-	int i = 0;
-	for (sf::Text menuText : m_MenuList_Text)
-	{
-		menuText.setFont(m_Font);
-		menuText.setFillColor(sf::Color::White);
-		menuText.setString(m_MenuList[i]);
-		menuText.setCharacterSize(50);
-		menuText.setPosition(sf::Vector2f(width + 10.f, (height /4) * i));
-		++i;
-	}
+
+	m_Menu[0].setFont(m_Font);
+	m_Menu[0].setFillColor(neonPurple);
+	m_Menu[0].setString("PLAY");
+	m_Menu[0].setCharacterSize(50);
+	m_Menu[0].setPosition(sf::Vector2f(width / 2 - 180.f, height / (size + 1) * 1));
+
+	m_Menu[1].setFont(m_Font);
+	m_Menu[1].setFillColor(brightOrange);
+	m_Menu[1].setString("SCORES");
+	m_Menu[1].setCharacterSize(50);
+	m_Menu[1].setPosition(sf::Vector2f(width / 2 - 180.f, height / (size + 1) * 2));
+
+	m_Menu[2].setFont(m_Font);
+	m_Menu[2].setFillColor(brightOrange);
+	m_Menu[2].setString("EXIT");
+	m_Menu[2].setCharacterSize(50);
+	m_Menu[2].setPosition(sf::Vector2f(width / 2 - 180.f, height / (size + 1) * 3));
+
+	std::cout << "selectedIndex : " << selectedIndex << std::endl;
+
+
 }
 
 Menu::~Menu()
@@ -27,12 +36,53 @@ Menu::~Menu()
 
 void Menu::DrawMenu(sf::RenderTarget& renderTarget)
 {
-	std::cout << "Drawing menu list items" << std::endl;
-	renderTarget.draw(m_MenuList_Text[0]);
-	renderTarget.draw(m_MenuList_Text[1]);
-	renderTarget.draw(m_MenuList_Text[2]);
-	renderTarget.draw(m_MenuList_Text[3]);
+	for (sf::Text text : m_Menu)
+	{
+		renderTarget.draw(text);
+	}
+}
 
+void Menu::MoveDown()
+{
+	if (selectedIndex < m_Menu.size() - 1)
+	{
+		m_Menu[selectedIndex].setCharacterSize(50);
+		m_Menu[selectedIndex].setFillColor(brightOrange);
+		selectedIndex += 1;
+		m_Menu[selectedIndex].setFillColor(neonPurple);
+		m_Menu[selectedIndex].setCharacterSize(61);
+
+		std::cout << "selectedIndex : " << selectedIndex << std::endl;
+	}
+	else 
+	{
+		std::cout << "[Out of Bounds] selectedIndex : " << selectedIndex << std::endl;
+	}
+
+
+}
+
+void Menu::MoveUp()
+{
+	if (selectedIndex - 1 >= 0)
+	{
+		m_Menu[selectedIndex].setCharacterSize(50);
+		m_Menu[selectedIndex].setFillColor(brightOrange);
+		selectedIndex -= 1;
+		m_Menu[selectedIndex].setFillColor(neonPurple);
+		m_Menu[selectedIndex].setCharacterSize(61);
+
+		std::cout << "selectedIndex : " << selectedIndex << std::endl;
+	}
+	else
+	{
+		std::cout << "[Out of Bounds] selectedIndex : " << selectedIndex << std::endl;
+	}
+}
+
+int Menu::GetPressedItem()
+{
+	return selectedIndex;
 }
 
 

@@ -15,6 +15,9 @@ struct GameBoard
 // inline - same across all compile unit
 inline bool s_GameOver = false;
 inline sf::Font s_Font;
+inline sf::Font s_Arcade_Font;
+inline sf::Font s_Arcade_Font2;
+
 
 inline sf::Color s_Colors[10] =
 {

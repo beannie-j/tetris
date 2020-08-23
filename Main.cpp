@@ -163,13 +163,147 @@ static void DrawGameBoard(sf::RenderWindow& window)
 static void DrawPoints(sf::RenderWindow& window, int points)
 {
     sf::Text text;
-    text.setFont(s_Font);
+    text.setFont(s_Arcade_Font);
     text.setFillColor(sf::Color::White);
     text.setCharacterSize(30);
-    text.setPosition(900, 50);
+    text.setPosition(850, 50);
     std::string string = "POINTS : " + std::to_string(points);
     text.setString(string);
     window.draw(text);
+}
+
+static void DrawTimer(sf::RenderWindow& window, sf::Clock clock)
+{
+    float last_time = clock.getElapsedTime().asSeconds();
+
+    sf::Text text;
+    text.setFont(s_Arcade_Font);
+    text.setFillColor(sf::Color(107, 133, 255));
+    text.setCharacterSize(150);
+    text.setPosition(window.getSize().x / 2 - 100.f, window.getSize().y / 2 - 100.f);
+    int timer = 3;
+
+    float now = clock.getElapsedTime().asSeconds();
+
+    if (now - last_time >= 1.0f)
+    {
+
+        while (timer >= 0)
+        {
+            timer -= 1;
+        }
+    }
+
+    text.setString(std::to_string(timer));
+    window.draw(text);
+    clock.restart();
+}
+
+static void PlayTetris(unsigned int Window_Width, unsigned int Window_Height)
+{
+
+    sf::RenderWindow window(sf::VideoMode(Window_Width, Window_Height), "Tetris");
+
+    memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
+
+    Tetromino current_tetromino = CreateTetromino();
+
+    sf::Clock clock;
+
+    float last_time = clock.getElapsedTime().asSeconds();
+
+    int points = 0;
+
+    sf::Vector2i mouse_position;
+
+    Button play_again_button(450.f, 400.f, 200.f, 50.f, s_Font, "Play again", 30, sf::Color::Blue, sf::Color::Green);
+
+    while (window.isOpen())
+    {
+        sf::Event event;
+
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Left)
+                {
+                    current_tetromino.posX -= cell_size;
+
+                    if (!current_tetromino.CheckBounds()) current_tetromino.posX += cell_size;
+                }
+
+                if (event.key.code == sf::Keyboard::Right)
+                {
+                    current_tetromino.posX += cell_size;
+
+                    if (!current_tetromino.CheckBounds()) current_tetromino.posX -= cell_size;
+                }
+
+                if (event.key.code == sf::Keyboard::Down)
+                {
+                    current_tetromino.MoveDown(cell_size);
+                }
+
+                if (event.key.code == sf::Keyboard::Up)
+                {
+                    current_tetromino.Rotate_HardCoded(current_tetromino.m_rotation_state);
+                }
+
+                if (event.key.code == sf::Keyboard::Space)
+                {
+
+                }
+            }
+        }
+
+        window.clear(sf::Color::Black);
+
+        DrawTimer(window, clock);
+        DrawGameBoard(window);
+        current_tetromino.Draw(window);
+        ClearRow(window);
+        DrawPoints(window, points);
+        CheckGameOver(current_tetromino);
+
+        mouse_position = sf::Mouse::getPosition(window);
+        //play_again_button.DrawButton(window);
+        //play_again_button.GetPressed(mouse_position);
+
+        float now = clock.getElapsedTime().asSeconds();
+
+        if (now - last_time >= 0.7f)
+        {
+            current_tetromino.MoveDown(cell_size);
+            last_time = now;
+        }
+
+        if (current_tetromino.m_landed && !s_GameOver)
+        {
+            ++points;
+            CommitBlock(current_tetromino);
+            if (current_tetromino.posY <= 0 && current_tetromino.m_landed) s_GameOver = true;
+            if (!s_GameOver) current_tetromino = CreateTetromino();
+        }
+
+        if (s_GameOver)
+        {
+            sf::Text text;
+            text.setFont(s_Arcade_Font);
+            text.setFillColor(sf::Color(254, 0, 2));
+            text.setCharacterSize(70);
+            text.setPosition(450, 50);
+            std::string string = "GAME OVER";
+            text.setString(string);
+            window.draw(text);
+            current_tetromino.m_color = sf::Color::Transparent;
+        }
+        window.display();
+
+    }
 }
 
 
@@ -178,44 +312,81 @@ int main()
     srand((unsigned int)time(NULL));
 
     s_Font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
+    // font made by [ codeman38 | cody@zone38.net | http://www.zone38.net/ ] 
+    s_Arcade_Font.loadFromFile("prstart.ttf");
 
     int Window_Width = 30 * Tetromino::block_size;
     int Window_Height = 30 * Tetromino::block_size;
 
-    sf::RenderWindow menu_window(sf::VideoMode(Window_Width/2, Window_Height/2), "Menu");
+    sf::RenderWindow main_menu_window(sf::VideoMode(Window_Width, Window_Height), "Menu");
+    Menu menu(Window_Width, Window_Height - 200.f, s_Arcade_Font);
 
-    Button play_tetris_button((Window_Width/4), (Window_Height/4), 200.f, 50.f, s_Font, "Play Tetris", 30, sf::Color::Blue, sf::Color::Green);
+    //Button play_tetris_button((Window_Width/4) - 200.f, (Window_Height/12), 200.f, 50.f, s_Font, "Play Tetris", 30, sf::Color::Blue, sf::Color::Green);
+    //Button leaderboard_button((Window_Width / 4) - 200.f, (Window_Height / 12) + 100.f, 200.f, 50.f, s_Font, "Leaderboard", 30, sf::Color::Blue, sf::Color::Green);
 
-
-    // Menu menu(menu_window.getSize().x, menu_window.getSize().y, s_Font);
-    //menu.DrawMenu(menu_window);
-    
-
-    while (menu_window.isOpen())
+    sf::Vector2i mouse_position;
+    while (main_menu_window.isOpen())
     {
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
-        while (menu_window.pollEvent(event))
+        while (main_menu_window.pollEvent(event))
         {
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
-                menu_window.close();
+                main_menu_window.close();
+
+            if (event.type == sf::Event::KeyReleased)
+            {
+                if (event.key.code == sf::Keyboard::Up)
+                {
+                    menu.MoveUp();
+                }
+
+                if (event.key.code == sf::Keyboard::Down)
+                {
+                    menu.MoveDown();
+                }
+
+                if (event.key.code == sf::Keyboard::Enter)
+                {
+                    std::cout << "[Key] Enter\n";
+                    switch (menu.GetPressedItem())
+                    {
+                    default:
+                        break;
+                    case 0:
+                        std::cout << "[Key] Play Button pressed\n";
+                        main_menu_window.close();
+                        PlayTetris(Window_Width, Window_Height);
+                        break;
+                    case 1:
+                        std::cout << "[Key] Scores Button pressed\n";
+                        break;
+                    case 2:
+                        std::cout << "[Key] Exit Button pressed\n";
+                        main_menu_window.close();
+                        break;
+                    }
+                }
+            }
         }
 
-        // clear the window with black color
-        menu_window.clear(sf::Color::Black);
+        main_menu_window.clear(sf::Color::Black);
+        mouse_position = sf::Mouse::getPosition(main_menu_window);
 
-        // draw everything here...
-        play_tetris_button.DrawButton(menu_window);
+        sf::Text arcade_game_title_text;
+        arcade_game_title_text.setFont(s_Arcade_Font);
+        arcade_game_title_text.setFillColor(sf::Color(255, 165, 0));
+        arcade_game_title_text.setCharacterSize(70);
+        arcade_game_title_text.setPosition(160, 50);
+        std::string str = "ARCADE GAMES";
+        arcade_game_title_text.setString(str);
+        main_menu_window.draw(arcade_game_title_text);
 
+        menu.DrawMenu(main_menu_window);
 
-        // end the current frame
-
-        menu_window.display();
+        main_menu_window.display();
     }
-
-    
-
 
     /*
 

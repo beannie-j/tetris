@@ -6,7 +6,7 @@ Button::Button(float x, float y, float width, float height, sf::Font font, std::
 
 	m_shape.setSize(sf::Vector2f(width, height));
 	m_shape.setPosition(sf::Vector2f(x, y));
-	m_shape.setFillColor(sf::Color(169, 169, 169));
+	m_shape.setFillColor(sf::Color(128, 128, 128));
 	m_shape.setOutlineColor(sf::Color::White);
 	m_font = font;
 	m_text.setFont(m_font);
@@ -51,7 +51,7 @@ void Button::GetPressed(sf::Vector2i mousePosition)
 	{
 		std::cout << "BUTTON IDLE" << std::endl;
 		m_buttonState = Button_States::IDLE;
-		m_shape.setFillColor(sf::Color(169, 169, 169));
+		m_shape.setFillColor(sf::Color(128, 128, 128));
 	}
 }
 
