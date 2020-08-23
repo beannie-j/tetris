@@ -5,6 +5,8 @@
 #include <typeinfo>
 
 #include "Tetromino.h"
+#include "Button.h"
+#include "Menu.h"
 
 int GetColorInt(Tetromino tetromino)
 {
@@ -180,6 +182,43 @@ int main()
     int Window_Width = 30 * Tetromino::block_size;
     int Window_Height = 30 * Tetromino::block_size;
 
+    sf::RenderWindow menu_window(sf::VideoMode(Window_Width/2, Window_Height/2), "Menu");
+
+    Button play_tetris_button((Window_Width/4), (Window_Height/4), 200.f, 50.f, s_Font, "Play Tetris", 30, sf::Color::Blue, sf::Color::Green);
+
+
+    // Menu menu(menu_window.getSize().x, menu_window.getSize().y, s_Font);
+    //menu.DrawMenu(menu_window);
+    
+
+    while (menu_window.isOpen())
+    {
+        // check all the window's events that were triggered since the last iteration of the loop
+        sf::Event event;
+        while (menu_window.pollEvent(event))
+        {
+            // "close requested" event: we close the window
+            if (event.type == sf::Event::Closed)
+                menu_window.close();
+        }
+
+        // clear the window with black color
+        menu_window.clear(sf::Color::Black);
+
+        // draw everything here...
+        play_tetris_button.DrawButton(menu_window);
+
+
+        // end the current frame
+
+        menu_window.display();
+    }
+
+    
+
+
+    /*
+
     sf::RenderWindow window(sf::VideoMode(Window_Width, Window_Height), "Tetris");
 
     memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
@@ -191,6 +230,10 @@ int main()
     float last_time = clock.getElapsedTime().asSeconds();
 
     int points = 0;
+
+    sf::Vector2i mouse_position;
+
+    Button play_again_button(450.f, 400.f, 200.f, 50.f, s_Font, "Play again", 30, sf::Color::Blue, sf::Color::Green);
 
     while (window.isOpen())
     {
@@ -242,6 +285,9 @@ int main()
         DrawPoints(window, points); 
         CheckGameOver(current_tetromino);
 
+        mouse_position = sf::Mouse::getPosition(window);
+        play_again_button.DrawButton(window);
+        play_again_button.GetPressed(mouse_position);
 
         float now = clock.getElapsedTime().asSeconds();
         if (now - last_time >= 0.7f)
@@ -273,6 +319,7 @@ int main()
         window.display();
 
     }
+    */
     
     return 0;
 }
