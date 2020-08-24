@@ -323,12 +323,10 @@ void Tetromino::Draw(sf::RenderWindow& window)
         {
             if (m_arr[y][x])
             {
-                float cx = (posX + x) * block_size;
-                float cy = (posY + y) * block_size;
+                float cx = (posX + x + s_shift) * block_size;
+                float cy = (posY + y + s_shift) * block_size;
 
                 rect.setPosition(sf::Vector2f(cx, cy));
-                //rect.setOutlineThickness(2);
-                //rect.setOutlineColor(sf::Color(250, 150, 100));
                 window.draw(rect);
 
                 text.setPosition(sf::Vector2f(cx, cy));

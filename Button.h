@@ -11,7 +11,6 @@ enum Button_States : int {
 class Button
 {
 private:
-	int m_buttonState = IDLE;
 	bool m_IsPressed;
 	bool m_IsHover;
 
@@ -23,10 +22,13 @@ private:
 	int m_character_size;
 
 public:
+	int m_buttonState = IDLE;
+
 	Button(float x, float y, float width, float height, sf::Font font, std::string string, int character_size, sf::Color idleColor, sf::Color hoverColor);
 	~Button();
 
 	void DrawButton(sf::RenderTarget& renderTarget);
 	void GetPressed(sf::Vector2i mousePosition);
+	void FillColor();
 };
 

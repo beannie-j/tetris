@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <array>
+#include <string>
 
 constexpr float cell_size = 1.0f;
 
@@ -17,6 +18,8 @@ inline bool s_GameOver = false;
 inline sf::Font s_Font;
 inline sf::Font s_Arcade_Font;
 inline sf::Font s_Arcade_Font2;
+inline std::string s_Username;
+inline int s_shift = 7;
 
 
 inline sf::Color s_Colors[10] =
