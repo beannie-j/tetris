@@ -20,7 +20,7 @@ public:
 	void DrawTextBox(sf::RenderTarget& renderTarget);
 	void setDimensions(float x, float y, float width, float height);
 	void setString(std::string str);
-	std::string getString();
+	const std::string getString();
 
 };
 

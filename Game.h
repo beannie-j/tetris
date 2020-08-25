@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <string>
+#include <queue>
+#include <vector>
 
 constexpr float cell_size = 1.0f;
 
@@ -13,6 +15,16 @@ struct GameBoard
     inline static constexpr int Height = 16;
     inline static std::array<int, Width* Height> PlayingArea;
 };
+
+struct cmp
+{
+    template<typename T, typename U>
+    bool operator() (T const& lhs, U const& rhs) const
+    {
+        return lhs.second < rhs.second;
+    }
+};
+
 // inline - same across all compile unit
 inline bool s_GameOver = false;
 inline sf::Font s_Font;
@@ -20,6 +32,8 @@ inline sf::Font s_Arcade_Font;
 inline sf::Font s_Arcade_Font2;
 inline std::string s_Username;
 inline int s_shift = 7;
+inline std::priority_queue<std::pair<std::string, int>,
+    std::vector<std::pair<std::string, int>>, cmp> s_priority_queue;
 
 
 inline sf::Color s_Colors[10] =

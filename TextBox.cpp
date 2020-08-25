@@ -56,7 +56,7 @@ void TextBox::setString(std::string str)
 	m_Text.setString(str);
 }
 
-std::string TextBox::getString()
+const std::string TextBox::getString()
 {
 	return m_String;
 }

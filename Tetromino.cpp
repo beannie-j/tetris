@@ -329,10 +329,11 @@ void Tetromino::Draw(sf::RenderWindow& window)
                 rect.setPosition(sf::Vector2f(cx, cy));
                 window.draw(rect);
 
-                text.setPosition(sf::Vector2f(cx, cy));
+                // this is for debugging purposes - dont delete
+                /*text.setPosition(sf::Vector2f(cx, cy));
                 std::string string = std::to_string((int)(posX + x)) + ", " + std::to_string((int)(posY + y));
                 text.setString(string);
-                window.draw(text);
+                window.draw(text);*/
             }
         }
     }
