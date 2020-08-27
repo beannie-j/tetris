@@ -28,13 +28,24 @@ struct cmp
 // inline - same across all compile unit
 inline bool s_GameOver = false;
 inline sf::Font s_Font;
-inline sf::Font s_Arcade_Font;
+inline sf::Font* s_Arcade_Font;
 inline sf::Font s_Arcade_Font2;
 inline std::string s_Username;
 inline int s_shift = 7;
 inline std::priority_queue<std::pair<std::string, int>,
     std::vector<std::pair<std::string, int>>, cmp> s_priority_queue;
 
+constexpr float block_size = 40.f;
+constexpr int Window_Width = 30 * block_size;
+constexpr int Window_Height = 30 * block_size;
+
+sf::RenderWindow& GetWindow();
+
+class Layer;
+void SetLayer(Layer* layer);
+
+template<typename T>
+void CreateAndSetLayer();
 
 inline sf::Color s_Colors[10] =
 {

@@ -36,6 +36,8 @@ public:
     void Rotate_HardCoded(RotationState rotation_state);
     static constexpr float block_size = 40.f;
 
-private:
+    Tetromino() = default;
 
+private:
+    
 };
