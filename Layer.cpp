@@ -1,8 +1,9 @@
-
 #include "Game.h"
 #include "Layer.h"
 #include "Database.h"
 #include <iostream>
+#include <chrono> 
+#include <ctime> 
 
 static void DrawUsername(sf::RenderWindow& window)
 {
@@ -31,25 +32,6 @@ static void DrawPoints(sf::RenderWindow& window, int points)
 	{
 		text.setFillColor(sf::Color::Transparent);
 	}
-}
-
-static void DrawTimer(sf::RenderWindow& window)
-{
-	sf::Text text;
-	text.setFont(*s_Arcade_Font);
-	text.setFillColor(sf::Color(107, 133, 255));
-	text.setCharacterSize(200);
-	text.setPosition(window.getSize().x / 2 - 100.f, window.getSize().y / 2 - 100.f);
-	int timer = 3;
-	timer -= 1;
-
-	if (timer < 0)
-	{
-		//text.setFillColor(sf::Color::Transparent);
-	}
-
-	text.setString(std::to_string(timer));
-	window.draw(text);
 }
 
 int GetColorInt(Tetromino tetromino)
@@ -272,7 +254,7 @@ void PreGameLayer::OnEvent(sf::Event& event)
 		std::cout << "[Key] Enter, Username : " << m_TextBox->getString() << std::endl;
 		s_Username = m_TextBox->getString();
 		m_PlayButton->FillColor();
-		SetLayer(new GameLayer());
+		SetLayer(new TimerLayer());
 	}
 }
 
@@ -288,7 +270,6 @@ static void CommitBlock(const Tetromino& tetromino)
 {
 	int txc = tetromino.posX;
 	int tyc = tetromino.posY + 1;
-
 
 	for (int y = 0; y < tetromino.m_size; y++)
 	{
@@ -306,13 +287,10 @@ static void CommitBlock(const Tetromino& tetromino)
 					std::cout << "[WARNING] : GameBoard height out of bounds" << std::endl;
 					continue;
 				}
-
 				GameBoard::PlayingArea[pos] = GetColorInt(tetromino);
-
 			}
 		}
 	}
-
 }
 
 static void ClearRow(sf::RenderWindow& window)
@@ -467,75 +445,86 @@ void GameLayer::OnEvent(sf::Event& event)
 	}
 }
 
-/*
-static void DrawScoreBoardWindow(sf::RenderWindow window)
-{
-	//sf::RenderWindow scoreBoardWindow(sf::VideoMode(Window_Width, Window_Height), "Scores");
-	//scoreBoardWindow.setFramerateLimit(60);
-	sf::Vector2i mouse_position;
-
-	auto temp = s_priority_queue;
-	int rank = 1;
-
-	while (!temp.empty()) {
-		std::string entry = std::to_string(rank) + " " + temp.top().first + " " + std::to_string(temp.top().second);
-		temp.pop();
-		rank += 1;
-		std::cout << entry << std::endl;
-	}
-
-	while (scoreBoardWindow.isOpen())
-	{
-		sf::Event event;
-		while (scoreBoardWindow.pollEvent(event))
-		{
-			
-		}
-		// Clear the whole window before rendering a new frame
-		scoreBoardWindow.clear();
-		mouse_position = sf::Mouse::getPosition(scoreBoardWindow);
-
-		int order = 1;
-
-		sf::Text boardEntry1;
-		boardEntry1.setFont(*s_Arcade_Font);
-		boardEntry1.setFillColor(sf::Color::White);
-		boardEntry1.setPosition(Window_Width / 4, 50 * order++);
-		boardEntry1.setString("1");
-		scoreBoardWindow.draw(boardEntry1);
-
-		sf::Text boardEntry2;
-		boardEntry2.setFont(*s_Arcade_Font);
-		boardEntry2.setFillColor(sf::Color::White);
-		boardEntry2.setPosition(Window_Width / 4, 50 * order++);
-		boardEntry2.setString("2");
-		scoreBoardWindow.draw(boardEntry2);
-
-		sf::Text boardEntry3;
-		boardEntry3.setFont(*s_Arcade_Font);
-		boardEntry3.setFillColor(sf::Color::White);
-		boardEntry3.setPosition(Window_Width / 4, 50 * order);
-		boardEntry3.setString("3");
-		scoreBoardWindow.draw(boardEntry3);
-
-		backButton.DrawButton(scoreBoardWindow);
-		backButton.GetPressed(mouse_position);
-		scoreBoardWindow.display();
-
-		if (backButton.m_buttonState == PRESSED)
-		{
-			scoreBoardWindow.close();
-			// draw main window
-			DrawMainWindow(Window_Width, Window_Height);
-		}
-	}
-}
-*/
 void ScoreBoardLayer::OnInit()
 {
 	Database& database = GetDatabase();
 	database.GetScoreList();
-	m_BackButton = std::make_unique<Button>(100.f, 100.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+
+	int i = 3;
+	int spacing = 95;
+	int x = 350.f;
+
+	m_title.setFont(*s_Arcade_Font);
+	m_title.setCharacterSize(50);
+	m_title.setFillColor(sf::Color::White);
+	m_title.setPosition(300.f, 80.f);
+	m_title.setString("HIGH SCORES");
+
+	m_score1.setFont(*s_Arcade_Font);
+	m_score1.setFillColor(sf::Color::White);
+	m_score1.setPosition(x + 300 , spacing * i);
+	m_entry1.setFont(*s_Arcade_Font);
+	m_entry1.setFillColor(sf::Color::White);
+	m_entry1.setPosition(x, spacing * i++);
+
+	m_score2.setFont(*s_Arcade_Font);
+	m_score2.setFillColor(sf::Color::White);
+	m_score2.setPosition(x + 300, spacing * i);
+	m_entry2.setFont(*s_Arcade_Font);
+	m_entry2.setFillColor(sf::Color::White);
+	m_entry2.setPosition(x, spacing * i++);
+
+	m_score3.setFont(*s_Arcade_Font);
+	m_score3.setFillColor(sf::Color::White);
+	m_score3.setPosition(x + 300, spacing * i);
+	m_entry3.setFont(*s_Arcade_Font);
+	m_entry3.setFillColor(sf::Color::White);
+	m_entry3.setPosition(x, spacing * i++);
+
+	m_entry4.setFont(*s_Arcade_Font);
+	m_entry4.setFillColor(sf::Color::White);
+	m_entry4.setPosition(x, spacing * i++);
+
+	m_entry5.setFont(*s_Arcade_Font);
+	m_entry5.setFillColor(sf::Color::White);
+	m_entry5.setPosition(x, spacing * i++);
+
+	m_entry6.setFont(*s_Arcade_Font);
+	m_entry6.setFillColor(sf::Color::White);
+	m_entry6.setPosition(x, spacing * i++);
+
+	m_entry7.setFont(*s_Arcade_Font);
+	m_entry7.setFillColor(sf::Color::White);
+	m_entry7.setPosition(x, spacing * i++);
+
+	m_entry8.setFont(*s_Arcade_Font);
+	m_entry8.setFillColor(sf::Color::White);
+	m_entry8.setPosition(x, spacing * i++);
+
+	m_entry9.setFont(*s_Arcade_Font);
+	m_entry9.setFillColor(sf::Color::White);
+	m_entry9.setPosition(x, spacing * i++);
+
+	m_entry10.setFont(*s_Arcade_Font);
+	m_entry10.setFillColor(sf::Color::White);
+	m_entry10.setPosition(x, spacing * i++);
+
+	auto score_list = database.GetScoreList();
+	for (const auto& score : score_list)
+	{
+		std::string str = score.first + "  " + std::to_string(score.second);
+	}
+
+	m_entry1.setString(score_list[0].first);
+	m_score1.setString(std::to_string(score_list[0].second));
+
+	m_entry2.setString(score_list[1].first);
+	m_score2.setString(std::to_string(score_list[1].second));
+
+	m_entry3.setString(score_list[2].first);
+	m_score3.setString(std::to_string(score_list[2].second));
+
 }
 
 void ScoreBoardLayer::OnShutdown()
@@ -546,13 +535,25 @@ void ScoreBoardLayer::OnShutdown()
 void ScoreBoardLayer::OnUpdate()
 {
 	sf::RenderWindow& window = GetWindow();
-	//Database& database = GetDatabase();
+	Database& database = GetDatabase();
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
 	m_BackButton->DrawButton(window);
 	m_BackButton->GetPressed(mouse_position);
 
+	window.draw(m_title);
+	window.draw(m_entry1);
+	window.draw(m_entry2);
+	window.draw(m_entry3);
+	window.draw(m_entry4);
+	window.draw(m_entry5);
+	window.draw(m_entry6);
+	window.draw(m_entry7);
+	window.draw(m_entry8);
+	window.draw(m_entry9);
+	window.draw(m_entry10);
+	window.draw(m_score1);
 
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
@@ -564,8 +565,92 @@ void ScoreBoardLayer::OnUpdate()
 
 void ScoreBoardLayer::OnEvent(sf::Event& event)
 {
-	if (event.type == sf::Event::Closed || event.key.code == sf::Keyboard::Escape)
+	if (event.key.code == sf::Keyboard::Escape)
 	{
 		//SetLayer(new MainMenuLayer());
 	}
+}
+
+void TimerLayer::OnInit()
+{
+	m_timer_text.setFont(*s_Arcade_Font);
+	m_timer_text.setFillColor(sf::Color(107, 133, 255));
+	m_timer_text.setCharacterSize(200);
+	m_timer_text.setPosition(Window_Width / 2 - 100.f, Window_Height / 2 - 200.f);
+}
+
+void TimerLayer::OnShutdown()
+{
+
+}
+
+void TimerLayer::OnUpdate()
+{
+	sf::RenderWindow& window = GetWindow();
+	
+	std::chrono::time_point<std::chrono::system_clock> begin = std::chrono::system_clock::now();
+
+	//auto end = std::chrono::system_clock::now();
+
+	auto time_difference = (std::chrono::duration_cast<std::chrono::microseconds>(begin - m_SecondsSinceStart).count()) / 1000000.0;
+
+	//std::cout << "Time difference (sec) = " << time_difference << std::endl;
+
+	if (time_difference > 2.0)
+	{
+		m_1second_mark = true;
+		std::cout << "1 second past " << time_difference <<std::endl;
+		std::cout << "timer count " << m_timer << std::endl;
+	}
+
+	if (time_difference > 5.0)
+	{
+		m_2second_mark = true;
+		std::cout << "2 second past " << time_difference << std::endl;
+	}
+
+	if (time_difference > 7.0)
+	{
+		m_3second_mark = true;
+		std::cout << "3 second past " << time_difference << std::endl;
+	}
+
+	if (m_1second_mark)
+	{
+		m_timer -= 1;
+		m_1second_mark = false;
+	}
+
+	if (m_2second_mark)
+	{
+		m_timer -= 1;
+		m_2second_mark = false;
+	}
+
+	if (m_3second_mark)
+	{
+		m_timer -= 1;
+		m_3second_mark = false;
+	}
+
+	m_timer_text.setString(std::to_string(m_timer));
+
+	if (m_timer <= 0)
+	{
+		m_timer_is_up = true;
+	}
+
+	window.draw(m_timer_text);
+
+	if (m_timer_is_up)
+	{
+		SetLayer(new GameLayer());
+	}
+}
+
+void TimerLayer::OnEvent(sf::Event& event)
+{
+	sf::Clock clock;
+	sf::Time elapsed = clock.getElapsedTime();
+	std::cout << elapsed.asSeconds() << std::endl;
 }

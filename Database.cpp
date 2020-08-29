@@ -9,7 +9,6 @@
 void Database::CreateScoreTable()
 {
 	std::string create_table_sql = "CREATE TABLE IF NOT EXISTS SCOREBOARD (ID integer PRIMARY KEY NOT NULL, NAME TEXT NOT NULL, points integer NOT NULL);";
-	//std::string create_table_sql = "DELETE FROM SCOREBOARD WHERE name = 'PEACH';";
 	char* error_msg = NULL;
 
 	int code = sqlite3_exec(m_db, create_table_sql.c_str(), NULL, 0, &error_msg);
@@ -53,12 +52,6 @@ std::vector<std::pair<std::string, int>> Database::GetScoreList()
 		points = (const char*)sqlite3_column_text(stmt, 1);
 		score_list.emplace_back(std::make_pair(name, atoi(points)));
 	}
-
-	for (int i = 0; i < score_list.size(); i++)
-	{
-		std::cout << score_list[i].first << " " << score_list[i].second << std::endl;
-	}
-
 	return score_list;
 }
 

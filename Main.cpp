@@ -100,11 +100,8 @@ int main()
 
     Init();
 
-    CreateAndSetLayer<MainMenuLayer>();
-
-    s_priority_queue.push(std::make_pair("Jeannie", 100));
-    s_priority_queue.push(std::make_pair("Jem", 40));
-    s_priority_queue.push(std::make_pair("Susie", 55));
+    //CreateAndSetLayer<MainMenuLayer>();
+    SetLayer(new MainMenuLayer());
 
     DrawMainWindow(Window_Width, Window_Height);
 
