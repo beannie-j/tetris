@@ -39,5 +39,4 @@ public:
     Tetromino() = default;
 
 private:
-    
 };

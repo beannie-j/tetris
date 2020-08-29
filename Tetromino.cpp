@@ -311,7 +311,7 @@ bool Tetromino::CheckBounds()
 void Tetromino::Draw(sf::RenderWindow& window)
 {
     sf::Text text;
-    text.setFont(s_Font);
+    text.setFont(*s_Arcade_Font);
     text.setFillColor(sf::Color(255, 255, 255));
     text.setCharacterSize(14);
 

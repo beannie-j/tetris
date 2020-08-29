@@ -1,7 +1,7 @@
 
 #include "Game.h"
 #include "Layer.h"
-
+#include "Database.h"
 #include <iostream>
 
 static void DrawUsername(sf::RenderWindow& window)
@@ -41,7 +41,6 @@ static void DrawTimer(sf::RenderWindow& window)
 	text.setCharacterSize(200);
 	text.setPosition(window.getSize().x / 2 - 100.f, window.getSize().y / 2 - 100.f);
 	int timer = 3;
-
 	timer -= 1;
 
 	if (timer < 0)
@@ -123,7 +122,7 @@ static void DrawGameBoard(sf::RenderWindow& window)
 	sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
 
 	sf::Text text;
-	text.setFont(s_Font);
+	text.setFont(*s_Arcade_Font);
 	text.setFillColor(sf::Color(255, 255, 255));
 	text.setCharacterSize(14);
 
@@ -165,7 +164,6 @@ void MainMenuLayer::OnInit()
 {
 	// load resources
 	m_Menu = std::make_unique<Menu>(Window_Width, Window_Height - 200.f, *s_Arcade_Font);
-
 }
 
 void MainMenuLayer::OnShutdown()
@@ -218,7 +216,7 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 				break;
 			case 1:
 				std::cout << "[Key] Scores Button pressed\n";
-				// scoreboardlayer SetLayer(new PreGameLayer());
+				SetLayer(new ScoreBoardLayer());
 				break;
 			case 2:
 				std::cout << "[Key] Exit Button pressed\n";
@@ -286,8 +284,6 @@ static Tetromino CreateTetromino()
 	return tetromino;
 }
 
-
-
 static void CommitBlock(const Tetromino& tetromino)
 {
 	int txc = tetromino.posX;
@@ -307,7 +303,7 @@ static void CommitBlock(const Tetromino& tetromino)
 
 				if (yc + 1 > GameBoard::Height)
 				{
-					std::cout << "[WARNING] : gameborad height out of bounds" << std::endl;
+					std::cout << "[WARNING] : GameBoard height out of bounds" << std::endl;
 					continue;
 				}
 
@@ -362,6 +358,7 @@ void GameLayer::OnShutdown()
 void GameLayer::OnUpdate()
 {
 	sf::RenderWindow& window = GetWindow();
+	Database& database = GetDatabase();
 	DrawGameBoard(window);
 	m_CurrentTetromino.Draw(window);
 	ClearRow(window);
@@ -394,6 +391,13 @@ void GameLayer::OnUpdate()
 
 	if (s_GameOver)
 	{
+		if (!m_db_updated)
+		{
+			database.InsertToScoreTable(s_Username, points);
+			database.GetScoreList();
+			m_db_updated = true;
+		}
+
 		sf::Text text;
 		text.setFont(*s_Arcade_Font);
 		text.setFillColor(sf::Color(254, 0, 2));
@@ -421,8 +425,7 @@ void GameLayer::OnUpdate()
 		if (m_PlayAgainButton->m_buttonState == PRESSED)
 		{
 			s_GameOver = false;
-			window.close();
-			//PlayTetris(Window_Width, Window_Height);
+			SetLayer(new GameLayer());
 		}
 	}
 }
@@ -461,5 +464,108 @@ void GameLayer::OnEvent(sf::Event& event)
 		{
 
 		}
+	}
+}
+
+/*
+static void DrawScoreBoardWindow(sf::RenderWindow window)
+{
+	//sf::RenderWindow scoreBoardWindow(sf::VideoMode(Window_Width, Window_Height), "Scores");
+	//scoreBoardWindow.setFramerateLimit(60);
+	sf::Vector2i mouse_position;
+
+	auto temp = s_priority_queue;
+	int rank = 1;
+
+	while (!temp.empty()) {
+		std::string entry = std::to_string(rank) + " " + temp.top().first + " " + std::to_string(temp.top().second);
+		temp.pop();
+		rank += 1;
+		std::cout << entry << std::endl;
+	}
+
+	while (scoreBoardWindow.isOpen())
+	{
+		sf::Event event;
+		while (scoreBoardWindow.pollEvent(event))
+		{
+			
+		}
+		// Clear the whole window before rendering a new frame
+		scoreBoardWindow.clear();
+		mouse_position = sf::Mouse::getPosition(scoreBoardWindow);
+
+		int order = 1;
+
+		sf::Text boardEntry1;
+		boardEntry1.setFont(*s_Arcade_Font);
+		boardEntry1.setFillColor(sf::Color::White);
+		boardEntry1.setPosition(Window_Width / 4, 50 * order++);
+		boardEntry1.setString("1");
+		scoreBoardWindow.draw(boardEntry1);
+
+		sf::Text boardEntry2;
+		boardEntry2.setFont(*s_Arcade_Font);
+		boardEntry2.setFillColor(sf::Color::White);
+		boardEntry2.setPosition(Window_Width / 4, 50 * order++);
+		boardEntry2.setString("2");
+		scoreBoardWindow.draw(boardEntry2);
+
+		sf::Text boardEntry3;
+		boardEntry3.setFont(*s_Arcade_Font);
+		boardEntry3.setFillColor(sf::Color::White);
+		boardEntry3.setPosition(Window_Width / 4, 50 * order);
+		boardEntry3.setString("3");
+		scoreBoardWindow.draw(boardEntry3);
+
+		backButton.DrawButton(scoreBoardWindow);
+		backButton.GetPressed(mouse_position);
+		scoreBoardWindow.display();
+
+		if (backButton.m_buttonState == PRESSED)
+		{
+			scoreBoardWindow.close();
+			// draw main window
+			DrawMainWindow(Window_Width, Window_Height);
+		}
+	}
+}
+*/
+void ScoreBoardLayer::OnInit()
+{
+	Database& database = GetDatabase();
+	database.GetScoreList();
+	m_BackButton = std::make_unique<Button>(100.f, 100.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+}
+
+void ScoreBoardLayer::OnShutdown()
+{
+
+}
+
+void ScoreBoardLayer::OnUpdate()
+{
+	sf::RenderWindow& window = GetWindow();
+	//Database& database = GetDatabase();
+
+	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
+
+	m_BackButton->DrawButton(window);
+	m_BackButton->GetPressed(mouse_position);
+
+
+	if (m_BackButton->m_buttonState == PRESSED)
+	{
+		std::cout << "Back Button pressed" << std::endl;
+		SetLayer(new MainMenuLayer());
+	}
+
+}
+
+void ScoreBoardLayer::OnEvent(sf::Event& event)
+{
+	if (event.type == sf::Event::Closed || event.key.code == sf::Keyboard::Escape)
+	{
+		//SetLayer(new MainMenuLayer());
 	}
 }
