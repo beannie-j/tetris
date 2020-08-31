@@ -1,9 +1,11 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <array>
 #include <string>
 #include <queue>
 #include <vector>
+#include <stack>
 
 constexpr float cell_size = 1.0f;
 
@@ -42,6 +44,11 @@ sf::RenderWindow& GetWindow();
 
 class Database;
 Database& GetDatabase();
+
+std::stack<sf::Sound>& GetSoundStack();
+
+class Sound;
+Sound& GetSound();
 
 class Layer;
 void SetLayer(Layer* layer);

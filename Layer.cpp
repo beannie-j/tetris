@@ -173,20 +173,27 @@ void MainMenuLayer::OnUpdate()
 
 void MainMenuLayer::OnEvent(sf::Event& event)
 {
+	m_Sound_Stack = GetSoundStack();
+
 	if (event.type == sf::Event::KeyReleased)
 	{
 		if (event.key.code == sf::Keyboard::Up)
 		{
 			m_Menu->MoveUp();
+			//m_Sound_Stack.push(m_Sound.m_Click_Sound);
+			m_Sound.PlayClickSound();
 		}
-
+		
 		if (event.key.code == sf::Keyboard::Down)
 		{
 			m_Menu->MoveDown();
+			m_Sound.PlayClickSound();
+			//m_Sound_Stack.push(m_Sound.m_Click_Sound);
 		}
 
 		if (event.key.code == sf::Keyboard::Enter)
 		{
+			m_Sound_Stack.push(m_Sound.m_Select_Sound);
 			std::cout << "[Key] Enter\n";
 			switch (m_Menu->GetPressedItem())
 			{
@@ -210,6 +217,7 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 
 void PreGameLayer::OnInit()
 {
+	m_Sound.PlaySelectSound();
 	m_TextBox = std::make_unique<TextBox>(*s_Arcade_Font, Window_Width / 4, 150.f, 500.f, 65.f);
 	m_PlayButton = std::make_unique<Button>(Window_Width / 4 + 150, 300.f, 200.f, 50.f, *s_Arcade_Font, "START", 30, sf::Color::Blue, sf::Color::Green);
 }
@@ -222,9 +230,7 @@ void PreGameLayer::OnShutdown()
 void PreGameLayer::OnUpdate()
 {
 	sf::RenderWindow& window = GetWindow();
-
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
-
 	// Draw some graphical entities
 	sf::Text askNameText;
 	askNameText.setFont(*s_Arcade_Font);
@@ -277,7 +283,6 @@ static void CommitBlock(const Tetromino& tetromino)
 		{
 			if (tetromino.m_arr[y][x])
 			{
-
 				int xc = txc + x;
 				int yc = tyc + y;
 				int pos = xc + yc * GameBoard::Width;
@@ -304,6 +309,8 @@ static void ClearRow(sf::RenderWindow& window)
 			if (block) count += 1;
 			if (count == GameBoard::Width)
 			{
+				std::cout << "row match" << std::endl;
+				GetSound().PlayBreakSound();
 				for (int x = 0; x < GameBoard::Width; x++) {
 					int i = y;
 					int j = 0;
@@ -321,6 +328,7 @@ static void ClearRow(sf::RenderWindow& window)
 
 void GameLayer::OnInit()
 {
+	m_Sound.PlayGameStartSound();
 	memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
 	m_CurrentTetromino = CreateTetromino();
@@ -361,6 +369,7 @@ void GameLayer::OnUpdate()
 	{
 		++points;
 		CommitBlock(m_CurrentTetromino);
+		m_Sound.PlayLandedSound();
 		if (m_CurrentTetromino.posY <= 0 && m_CurrentTetromino.m_landed)
 			s_GameOver = true;
 		if (!s_GameOver)
@@ -371,6 +380,7 @@ void GameLayer::OnUpdate()
 	{
 		if (!m_db_updated)
 		{
+			m_Sound.PlayGameOverSound();
 			database.InsertToScoreTable(s_Username, points);
 			database.GetScoreList();
 			m_db_updated = true;
@@ -403,7 +413,7 @@ void GameLayer::OnUpdate()
 		if (m_PlayAgainButton->m_buttonState == PRESSED)
 		{
 			s_GameOver = false;
-			SetLayer(new GameLayer());
+			SetLayer(new TimerLayer());
 		}
 	}
 }
@@ -451,8 +461,8 @@ void ScoreBoardLayer::OnInit()
 	database.GetScoreList();
 	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
 
-	int i = 3;
-	int spacing = 95;
+	int i = 2;
+	int spacing = 150;
 	int x = 350.f;
 
 	m_title.setFont(*s_Arcade_Font);
@@ -461,12 +471,22 @@ void ScoreBoardLayer::OnInit()
 	m_title.setPosition(300.f, 80.f);
 	m_title.setString("HIGH SCORES");
 
+	m_Gold_Texture.loadFromFile("first.png");
+	m_Gold_Sprite.setTexture(m_Gold_Texture);
+	m_Gold_Sprite.setScale(0.2f, 0.2f);
+	m_Gold_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
+
 	m_score1.setFont(*s_Arcade_Font);
 	m_score1.setFillColor(sf::Color::White);
 	m_score1.setPosition(x + 300 , spacing * i);
 	m_entry1.setFont(*s_Arcade_Font);
 	m_entry1.setFillColor(sf::Color::White);
 	m_entry1.setPosition(x, spacing * i++);
+
+	m_Silver_Texture.loadFromFile("second.png");
+	m_Silver_Sprite.setTexture(m_Silver_Texture);
+	m_Silver_Sprite.setScale(0.2f, 0.2f);
+	m_Silver_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
 
 	m_score2.setFont(*s_Arcade_Font);
 	m_score2.setFillColor(sf::Color::White);
@@ -475,40 +495,17 @@ void ScoreBoardLayer::OnInit()
 	m_entry2.setFillColor(sf::Color::White);
 	m_entry2.setPosition(x, spacing * i++);
 
+	m_Bronze_Texture.loadFromFile("third.png");
+	m_Bronze_Sprite.setTexture(m_Bronze_Texture);
+	m_Bronze_Sprite.setScale(0.2f, 0.2f);
+	m_Bronze_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
+
 	m_score3.setFont(*s_Arcade_Font);
 	m_score3.setFillColor(sf::Color::White);
 	m_score3.setPosition(x + 300, spacing * i);
 	m_entry3.setFont(*s_Arcade_Font);
 	m_entry3.setFillColor(sf::Color::White);
 	m_entry3.setPosition(x, spacing * i++);
-
-	m_entry4.setFont(*s_Arcade_Font);
-	m_entry4.setFillColor(sf::Color::White);
-	m_entry4.setPosition(x, spacing * i++);
-
-	m_entry5.setFont(*s_Arcade_Font);
-	m_entry5.setFillColor(sf::Color::White);
-	m_entry5.setPosition(x, spacing * i++);
-
-	m_entry6.setFont(*s_Arcade_Font);
-	m_entry6.setFillColor(sf::Color::White);
-	m_entry6.setPosition(x, spacing * i++);
-
-	m_entry7.setFont(*s_Arcade_Font);
-	m_entry7.setFillColor(sf::Color::White);
-	m_entry7.setPosition(x, spacing * i++);
-
-	m_entry8.setFont(*s_Arcade_Font);
-	m_entry8.setFillColor(sf::Color::White);
-	m_entry8.setPosition(x, spacing * i++);
-
-	m_entry9.setFont(*s_Arcade_Font);
-	m_entry9.setFillColor(sf::Color::White);
-	m_entry9.setPosition(x, spacing * i++);
-
-	m_entry10.setFont(*s_Arcade_Font);
-	m_entry10.setFillColor(sf::Color::White);
-	m_entry10.setPosition(x, spacing * i++);
 
 	auto score_list = database.GetScoreList();
 	for (const auto& score : score_list)
@@ -524,7 +521,6 @@ void ScoreBoardLayer::OnInit()
 
 	m_entry3.setString(score_list[2].first);
 	m_score3.setString(std::to_string(score_list[2].second));
-
 }
 
 void ScoreBoardLayer::OnShutdown()
@@ -546,14 +542,17 @@ void ScoreBoardLayer::OnUpdate()
 	window.draw(m_entry1);
 	window.draw(m_entry2);
 	window.draw(m_entry3);
-	window.draw(m_entry4);
-	window.draw(m_entry5);
-	window.draw(m_entry6);
-	window.draw(m_entry7);
-	window.draw(m_entry8);
-	window.draw(m_entry9);
-	window.draw(m_entry10);
+
 	window.draw(m_score1);
+	window.draw(m_score2);
+	window.draw(m_score3);
+
+
+	window.draw(m_Gold_Sprite);
+	window.draw(m_Silver_Sprite);
+	window.draw(m_Bronze_Sprite);
+
+
 
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
@@ -567,16 +566,23 @@ void ScoreBoardLayer::OnEvent(sf::Event& event)
 {
 	if (event.key.code == sf::Keyboard::Escape)
 	{
-		//SetLayer(new MainMenuLayer());
+		SetLayer(new MainMenuLayer());
 	}
 }
 
 void TimerLayer::OnInit()
 {
+	m_Sound.PlaySelectSound();
+	m_game_start_text.setFont(*s_Arcade_Font);
+	m_game_start_text.setFillColor(sf::Color(107, 133, 255));
+	m_game_start_text.setCharacterSize(50);
+	m_game_start_text.setPosition(200.f, 200.f);
+	m_game_start_text.setString("GAME STARTS IN...");
+
 	m_timer_text.setFont(*s_Arcade_Font);
 	m_timer_text.setFillColor(sf::Color(107, 133, 255));
-	m_timer_text.setCharacterSize(200);
-	m_timer_text.setPosition(Window_Width / 2 - 100.f, Window_Height / 2 - 200.f);
+	m_timer_text.setCharacterSize(150);
+	m_timer_text.setPosition(500.f, 500.f);
 }
 
 void TimerLayer::OnShutdown()
@@ -586,63 +592,17 @@ void TimerLayer::OnShutdown()
 
 void TimerLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
-	
+	sf::RenderWindow& window = GetWindow();	
 	std::chrono::time_point<std::chrono::system_clock> begin = std::chrono::system_clock::now();
-
-	//auto end = std::chrono::system_clock::now();
-
 	auto time_difference = (std::chrono::duration_cast<std::chrono::microseconds>(begin - m_SecondsSinceStart).count()) / 1000000.0;
+	auto timer = m_timer - (int)time_difference;
 
-	//std::cout << "Time difference (sec) = " << time_difference << std::endl;
-
-	if (time_difference > 2.0)
-	{
-		m_1second_mark = true;
-		std::cout << "1 second past " << time_difference <<std::endl;
-		std::cout << "timer count " << m_timer << std::endl;
-	}
-
-	if (time_difference > 5.0)
-	{
-		m_2second_mark = true;
-		std::cout << "2 second past " << time_difference << std::endl;
-	}
-
-	if (time_difference > 7.0)
-	{
-		m_3second_mark = true;
-		std::cout << "3 second past " << time_difference << std::endl;
-	}
-
-	if (m_1second_mark)
-	{
-		m_timer -= 1;
-		m_1second_mark = false;
-	}
-
-	if (m_2second_mark)
-	{
-		m_timer -= 1;
-		m_2second_mark = false;
-	}
-
-	if (m_3second_mark)
-	{
-		m_timer -= 1;
-		m_3second_mark = false;
-	}
-
-	m_timer_text.setString(std::to_string(m_timer));
-
-	if (m_timer <= 0)
-	{
-		m_timer_is_up = true;
-	}
+	m_timer_text.setString(std::to_string(timer));
 
 	window.draw(m_timer_text);
+	window.draw(m_game_start_text);
 
-	if (m_timer_is_up)
+	if (timer < 0)
 	{
 		SetLayer(new GameLayer());
 	}
@@ -650,7 +610,5 @@ void TimerLayer::OnUpdate()
 
 void TimerLayer::OnEvent(sf::Event& event)
 {
-	sf::Clock clock;
-	sf::Time elapsed = clock.getElapsedTime();
-	std::cout << elapsed.asSeconds() << std::endl;
+
 }

@@ -10,6 +10,10 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include "Sound.h"
+#include <stack>
+
+
 
 class Layer
 {
@@ -17,6 +21,8 @@ public:
 	Layer() = default;
 	virtual ~Layer() = default;
 	Database m_database;
+	Sound m_Sound = GetSound();
+	std::stack<sf::Sound> m_Sound_Stack;
 
 	virtual void OnInit() {}
 	virtual void OnShutdown() {}
@@ -63,12 +69,9 @@ public:
 	virtual void OnUpdate() override;
 	virtual void OnEvent(sf::Event& event) override;
 private:
+	sf::Text m_game_start_text;
 	sf::Text m_timer_text;
 	std::chrono::time_point<std::chrono::system_clock> m_SecondsSinceStart = std::chrono::system_clock::now();
-	bool m_timer_is_up = false;
-	bool m_1second_mark = false;
-	bool m_2second_mark = false;
-	bool m_3second_mark = false;
 	int m_timer = 3;
 };
 
@@ -96,6 +99,15 @@ public:
 private:
 	std::unique_ptr<Button> m_BackButton;
 
+	sf::Texture m_Gold_Texture;
+	sf::Sprite m_Gold_Sprite;
+
+	sf::Texture m_Silver_Texture;
+	sf::Sprite m_Silver_Sprite;
+
+	sf::Texture m_Bronze_Texture;
+	sf::Sprite m_Bronze_Sprite;
+
 	sf::Text m_title;
 
 	sf::Text m_entry1;
@@ -106,21 +118,6 @@ private:
 
 	sf::Text m_entry3;
 	sf::Text m_score3;
-
-	sf::Text m_entry4;
-	sf::Text m_score4;
-	
-	sf::Text m_entry5;
-	
-	sf::Text m_entry6;
-	
-	sf::Text m_entry7;
-	
-	sf::Text m_entry8;
-	
-	sf::Text m_entry9;
-	
-	sf::Text m_entry10;
 };
 
 

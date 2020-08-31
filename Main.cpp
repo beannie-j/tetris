@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <array>
 #include <iostream>
 #include <cstdlib>
@@ -11,10 +12,16 @@
 #include "Layer.h"
 #include <sqlite3.h>
 #include "Database.h"
+#include "Sound.h"
+#include <stack>
 
 static Layer* s_CurrentLayer = nullptr;
 static sf::RenderWindow* s_Window = nullptr;
 static Database* s_Database = nullptr;
+static Sound* s_Sound = nullptr;
+static std::stack<sf::Sound>* s_Sound_Stack = new std::stack<sf::Sound>();
+
+
 
 static void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height)
 {
@@ -34,7 +41,22 @@ static void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height
         s_CurrentLayer->OnUpdate();
 
         s_Window->display();
+
+        //std::cout << GetSoundStack().size() << std::endl;
+        
+        if (!s_Sound_Stack->empty())
+        {
+            std::cout << "lets play sound" << std::endl;
+            s_Sound_Stack->top().play();
+            s_Sound_Stack->pop();
+        }
+
     }
+}
+
+std::stack<sf::Sound>& GetSoundStack()
+{
+	return *s_Sound_Stack;
 }
 
 sf::RenderWindow& GetWindow()
@@ -45,6 +67,11 @@ sf::RenderWindow& GetWindow()
 Database& GetDatabase()
 {
 	return *s_Database;
+}
+
+Sound& GetSound()
+{
+    return *s_Sound;
 }
 
 static void Init()
@@ -60,6 +87,11 @@ static void Init()
     s_Database->OnInit();
     s_Database->CreateScoreTable();
     s_Database->GetScoreList();
+
+    s_Sound = new Sound();
+    s_Sound->Init();
+    
+    //std::stack<sf::Sound>* s_Sound_Stack = new std::stack<sf::Sound>();
 }
 
 static void Shutdown()
@@ -69,6 +101,8 @@ static void Shutdown()
     // Destroy window
     delete s_Window;
     delete s_Database;
+    delete s_Sound;
+    delete s_Sound_Stack;
 }
 
 template<typename T>

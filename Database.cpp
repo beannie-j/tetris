@@ -9,12 +9,14 @@
 void Database::CreateScoreTable()
 {
 	std::string create_table_sql = "CREATE TABLE IF NOT EXISTS SCOREBOARD (ID integer PRIMARY KEY NOT NULL, NAME TEXT NOT NULL, points integer NOT NULL);";
+	//std::string create_table_sql = "DELETE FROM SCOREBOARD WHERE name ='Susie';";
+
 	char* error_msg = NULL;
 
 	int code = sqlite3_exec(m_db, create_table_sql.c_str(), NULL, 0, &error_msg);
 
 	if (code != SQLITE_OK) {
-		std::cerr << "[Error] Create SCOREBOARD Table Fail" << error_msg << std::endl;
+		std::cerr << "[Error] Create SCOREBOARD Table Fail " << error_msg << std::endl;
 		sqlite3_free(error_msg);
 	}
 	else
@@ -44,7 +46,7 @@ std::vector<std::pair<std::string, int>> Database::GetScoreList()
 	const char* name = NULL;
 	const char* points = NULL;
 	std::string row = "";
-	const char* sql = "SELECT name, points FROM SCOREBOARD order by points desc LIMIT 10;";
+	const char* sql = "SELECT name, points FROM SCOREBOARD order by points desc LIMIT 3;";
 	sqlite3_prepare_v2(m_db, sql, -1, &stmt, 0);
 	while (sqlite3_step(stmt) == SQLITE_ROW)
 	{
