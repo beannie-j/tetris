@@ -193,6 +193,7 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 
 		if (event.key.code == sf::Keyboard::Enter)
 		{
+			m_Sound.PlaySelectSound();
 			m_Sound_Stack.push(m_Sound.m_Select_Sound);
 			std::cout << "[Key] Enter\n";
 			switch (m_Menu->GetPressedItem())
@@ -201,14 +202,18 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 				break;
 			case 0:
 				std::cout << "[Key] Play Button pressed\n";
+				m_Sound.PlaySelectSound();
 				SetLayer(new PreGameLayer());
 				break;
 			case 1:
 				std::cout << "[Key] Scores Button pressed\n";
+				m_Sound.PlaySelectSound();
 				SetLayer(new ScoreBoardLayer());
 				break;
 			case 2:
 				std::cout << "[Key] Exit Button pressed\n";
+				//m_Sound.PlaySelectSound();
+				GetWindow().close();
 				break;
 			}
 		}
@@ -217,7 +222,7 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 
 void PreGameLayer::OnInit()
 {
-	m_Sound.PlaySelectSound();
+	//m_Sound.PlaySelectSound();
 	m_TextBox = std::make_unique<TextBox>(*s_Arcade_Font, Window_Width / 4, 150.f, 500.f, 65.f);
 	m_PlayButton = std::make_unique<Button>(Window_Width / 4 + 150, 300.f, 200.f, 50.f, *s_Arcade_Font, "START", 30, sf::Color::Blue, sf::Color::Green);
 }
@@ -557,6 +562,7 @@ void ScoreBoardLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "Back Button pressed" << std::endl;
+		m_Sound.PlaySelectSound();
 		SetLayer(new MainMenuLayer());
 	}
 
@@ -566,6 +572,7 @@ void ScoreBoardLayer::OnEvent(sf::Event& event)
 {
 	if (event.key.code == sf::Keyboard::Escape)
 	{
+		m_Sound.PlaySelectSound();
 		SetLayer(new MainMenuLayer());
 	}
 }

@@ -21,7 +21,7 @@ public:
 	Layer() = default;
 	virtual ~Layer() = default;
 	Database m_database;
-	Sound m_Sound = GetSound();
+	Sound &m_Sound = GetSound();
 	std::stack<sf::Sound> m_Sound_Stack;
 
 	virtual void OnInit() {}
