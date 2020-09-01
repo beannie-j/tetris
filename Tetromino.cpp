@@ -94,7 +94,8 @@ void Tetromino::Rotate_HardCoded(RotationState rotation_state)
         }
         break;
     case TetrominoType::O:
-        m_arr = { { {1,1,0,0},
+        m_arr = { { 
+            {1,1,0,0},
             {1,1,0,0},
             {0,0,0,0},
             {0,0,0,0} } };
