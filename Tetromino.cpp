@@ -311,10 +311,11 @@ bool Tetromino::CheckBounds()
 
 void Tetromino::Draw(sf::RenderWindow& window)
 {
-    sf::Text text;
-    text.setFont(*s_Arcade_Font);
-    text.setFillColor(sf::Color(255, 255, 255));
-    text.setCharacterSize(14);
+    // dont delete, debugging purposes.
+    //sf::Text text;
+    //text.setFont(*s_Arcade_Font);
+    //text.setFillColor(sf::Color(255, 255, 255));
+    //text.setCharacterSize(14);
 
     sf::RectangleShape rect(sf::Vector2f(block_size, block_size));
     rect.setFillColor(m_color);
@@ -328,6 +329,8 @@ void Tetromino::Draw(sf::RenderWindow& window)
                 float cy = (posY + y + s_shift) * block_size;
 
                 rect.setPosition(sf::Vector2f(cx, cy));
+                rect.setOutlineColor(sf::Color::White);
+                rect.setOutlineThickness(1);
                 window.draw(rect);
 
                 // this is for debugging purposes - dont delete

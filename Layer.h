@@ -20,7 +20,10 @@ public:
 	virtual ~Layer() = default;
 	Database& m_Database = GetDatabase();
 	// make sure &m_sound not m_Sound
-	Sound& m_Sound = GetSound();
+	Sound& m_Sound = GetSound(); 
+	// Sound m_Sound = GetSound();- this just copies
+	//basically calls Sound(const Sound&)
+	//Sound* m_Sound = GetSound();
 	std::stack<sf::Sound> m_Sound_Stack;
 
 	virtual void OnInit() {}
@@ -40,12 +43,20 @@ public:
 	virtual void OnEvent(sf::Event& event) override;
 private:
 	Tetromino m_CurrentTetromino;
+	Tetromino m_NextTetromino;
+
+	// why can't I do this in the header file?
+	//TetrominoType type = TetrominoType::I;
+	//Tetromino m_NextTetromino(type);
+
 	sf::Clock clock;
 	float m_LastTime = 0.0f;
 	int points = 0;
 	std::unique_ptr<Button> m_PlayAgainButton;
 	bool m_db_updated = false;
 	std::unique_ptr<Button> m_BackButton;
+	sf::Text m_NextTetrominoText;
+	sf::RectangleShape m_NextTetrominoBox;
 };
 
 class MainMenuLayer : public Layer

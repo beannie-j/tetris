@@ -102,11 +102,11 @@ static void DrawGameBoard_GameOver(sf::RenderWindow& window)
 static void DrawGameBoard(sf::RenderWindow& window)
 {
 	sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
-
-	sf::Text text;
-	text.setFont(*s_Arcade_Font);
-	text.setFillColor(sf::Color(255, 255, 255));
-	text.setCharacterSize(14);
+	// this is for debugging purposes - don't delete
+	//sf::Text text;
+	//text.setFont(*s_Arcade_Font);
+	//text.setFillColor(sf::Color(255, 255, 255));
+	//text.setCharacterSize(14);
 
 	for (int y = 0; y < GameBoard::Height; y++)
 	{
@@ -350,6 +350,20 @@ void GameLayer::OnInit()
 	m_CurrentTetromino = CreateTetromino();
 	m_PlayAgainButton = std::make_unique<Button>(770.f, 400.f, 350.f, 50.f, *s_Arcade_Font, "PLAY AGAIN", 30, sf::Color::Blue, sf::Color::Green);
 	m_LastTime = clock.getElapsedTime().asSeconds();
+
+	m_NextTetrominoText.setFont(*s_Arcade_Font);
+	m_NextTetrominoText.setFillColor(sf::Color::White);
+	m_NextTetrominoText.setCharacterSize(30);
+	m_NextTetrominoText.setPosition(830, 350);
+	m_NextTetrominoText.setString("NEXT");
+
+	m_NextTetrominoBox.setSize(sf::Vector2f(300, 200));
+	m_NextTetrominoBox.setPosition(sf::Vector2f(750, 400));
+	m_NextTetrominoBox.setFillColor(sf::Color(128, 128, 128));
+
+	m_NextTetromino = CreateTetromino();
+	m_NextTetromino.posX = 14.0;
+	m_NextTetromino.posY = 4.0;
 }
 
 void GameLayer::OnShutdown()
@@ -374,7 +388,6 @@ void GameLayer::OnUpdate()
 
 	float now = clock.getElapsedTime().asSeconds();
 
-
 	if (now - m_LastTime >= 0.7f)
 	{
 		m_CurrentTetromino.MoveDown(cell_size);
@@ -393,6 +406,10 @@ void GameLayer::OnUpdate()
 	}
 	m_BackButton->DrawButton(window);
 	m_BackButton->GetPressed(mouse_position);
+
+	window.draw(m_NextTetrominoBox);
+	window.draw(m_NextTetrominoText);
+	m_NextTetromino.Draw(window);
 
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
@@ -441,7 +458,6 @@ void GameLayer::OnUpdate()
 			s_GameOver = false;
 			SetLayer(new TimerLayer());
 		}
-
 
 	}
 }
