@@ -212,7 +212,6 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 				break;
 			case 2:
 				std::cout << "[Key] Exit Button pressed\n";
-				//m_Sound.PlaySelectSound();
 				GetWindow().close();
 				break;
 			}
@@ -222,9 +221,9 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 
 void PreGameLayer::OnInit()
 {
-	//m_Sound.PlaySelectSound();
 	m_TextBox = std::make_unique<TextBox>(*s_Arcade_Font, Window_Width / 4, 150.f, 500.f, 65.f);
 	m_PlayButton = std::make_unique<Button>(Window_Width / 4 + 150, 300.f, 200.f, 50.f, *s_Arcade_Font, "START", 30, sf::Color::Blue, sf::Color::Green);
+	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
 }
 
 void PreGameLayer::OnShutdown()
@@ -251,6 +250,16 @@ void PreGameLayer::OnUpdate()
 	m_PlayButton->DrawButton(window);
 	//playButton.GetPressed(mouse_position);
 	m_TextBox->DrawTextBox(window);
+
+	m_BackButton->DrawButton(window);
+	m_BackButton->GetPressed(mouse_position);
+
+	if (m_BackButton->m_buttonState == PRESSED)
+	{
+		std::cout << "[INFO] Back Button pressed" << std::endl;
+		m_Sound.PlaySelectSound();
+		SetLayer(new MainMenuLayer());
+	}
 }
 
 void PreGameLayer::OnEvent(sf::Event& event)
@@ -333,6 +342,8 @@ static void ClearRow(sf::RenderWindow& window)
 
 void GameLayer::OnInit()
 {
+	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+
 	m_Sound.PlayGameStartSound();
 	memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
@@ -349,7 +360,6 @@ void GameLayer::OnShutdown()
 void GameLayer::OnUpdate()
 {
 	sf::RenderWindow& window = GetWindow();
-	Database& database = GetDatabase();
 	DrawGameBoard(window);
 	m_CurrentTetromino.Draw(window);
 	ClearRow(window);
@@ -363,6 +373,7 @@ void GameLayer::OnUpdate()
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
 	float now = clock.getElapsedTime().asSeconds();
+
 
 	if (now - m_LastTime >= 0.7f)
 	{
@@ -380,14 +391,24 @@ void GameLayer::OnUpdate()
 		if (!s_GameOver)
 			m_CurrentTetromino = CreateTetromino();
 	}
+	m_BackButton->DrawButton(window);
+	m_BackButton->GetPressed(mouse_position);
+
+	if (m_BackButton->m_buttonState == PRESSED)
+	{
+		std::cout << "[INFO] Back Button pressed" << std::endl;
+		m_Sound.PlaySelectSound();
+		s_GameOver = false;
+		SetLayer(new MainMenuLayer());
+	}
 
 	if (s_GameOver)
 	{
 		if (!m_db_updated)
 		{
 			m_Sound.PlayGameOverSound();
-			database.InsertToScoreTable(s_Username, points);
-			database.GetScoreList();
+			m_Database.InsertToScoreTable(s_Username, points);
+			m_Database.GetScoreList();
 			m_db_updated = true;
 		}
 
@@ -420,6 +441,8 @@ void GameLayer::OnUpdate()
 			s_GameOver = false;
 			SetLayer(new TimerLayer());
 		}
+
+
 	}
 }
 
@@ -462,8 +485,8 @@ void GameLayer::OnEvent(sf::Event& event)
 
 void ScoreBoardLayer::OnInit()
 {
-	Database& database = GetDatabase();
-	database.GetScoreList();
+	//Database& database = GetDatabase();
+	m_Database.GetScoreList();
 	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
 
 	int i = 2;
@@ -512,7 +535,7 @@ void ScoreBoardLayer::OnInit()
 	m_entry3.setFillColor(sf::Color::White);
 	m_entry3.setPosition(x, spacing * i++);
 
-	auto score_list = database.GetScoreList();
+	auto score_list = m_Database.GetScoreList();
 	for (const auto& score : score_list)
 	{
 		std::string str = score.first + "  " + std::to_string(score.second);
@@ -565,7 +588,6 @@ void ScoreBoardLayer::OnUpdate()
 		m_Sound.PlaySelectSound();
 		SetLayer(new MainMenuLayer());
 	}
-
 }
 
 void ScoreBoardLayer::OnEvent(sf::Event& event)

@@ -21,8 +21,6 @@ static Database* s_Database = nullptr;
 static Sound* s_Sound = nullptr;
 static std::stack<sf::Sound>* s_Sound_Stack = new std::stack<sf::Sound>();
 
-
-
 static void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height)
 {
     while (s_Window->isOpen())
@@ -41,8 +39,6 @@ static void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height
         s_CurrentLayer->OnUpdate();
 
         s_Window->display();
-
-        //std::cout << GetSoundStack().size() << std::endl;
         
         if (!s_Sound_Stack->empty())
         {
@@ -50,7 +46,6 @@ static void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height
             s_Sound_Stack->top().play();
             s_Sound_Stack->pop();
         }
-
     }
 }
 
@@ -91,7 +86,6 @@ static void Init()
     s_Sound = new Sound();
     s_Sound->Init();
     
-    //std::stack<sf::Sound>* s_Sound_Stack = new std::stack<sf::Sound>();
 }
 
 static void Shutdown()

@@ -13,15 +13,14 @@
 #include "Sound.h"
 #include <stack>
 
-
-
 class Layer
 {
 public:
 	Layer() = default;
 	virtual ~Layer() = default;
-	Database m_database;
-	Sound &m_Sound = GetSound();
+	Database& m_Database = GetDatabase();
+	// make sure &m_sound not m_Sound
+	Sound& m_Sound = GetSound();
 	std::stack<sf::Sound> m_Sound_Stack;
 
 	virtual void OnInit() {}
@@ -46,6 +45,7 @@ private:
 	int points = 0;
 	std::unique_ptr<Button> m_PlayAgainButton;
 	bool m_db_updated = false;
+	std::unique_ptr<Button> m_BackButton;
 };
 
 class MainMenuLayer : public Layer
@@ -86,6 +86,7 @@ public:
 private:
 	std::unique_ptr<TextBox> m_TextBox;
 	std::unique_ptr<Button> m_PlayButton;
+	std::unique_ptr<Button> m_BackButton;
 };
 
 class ScoreBoardLayer : public Layer
