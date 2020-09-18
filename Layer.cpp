@@ -278,11 +278,35 @@ void PreGameLayer::OnEvent(sf::Event& event)
 	}
 }
 
-static Tetromino CreateTetromino()
+static void CheckAndFillQueue(std::deque<int>& deque)
 {
-	int random = rand() % 7;
-	TetrominoType type = GetTypeFromNumeration(random);
+	if (deque.size() < 2)
+	{
+		for (int i = 0; i < 15; i++)
+		{
+			int random = rand() % 7;
+			deque.push_back(random);
+			std::cout << random << " ,";
+		}
+	}
+}
+
+static Tetromino CreateTetromino(std::deque<int>& deque)
+{
+	//int random = rand() % 7;
+	TetrominoType type = GetTypeFromNumeration(deque.front());
 	Tetromino tetromino(type);
+
+	deque.pop_front();
+
+	for (int i = 0; i < deque.size(); i++)
+	{
+		std::cout << deque[i] << " ,";
+	}
+	std::cout << "\n";
+
+	CheckAndFillQueue(deque);
+
 	return tetromino;
 }
 
@@ -342,13 +366,29 @@ static void ClearRow(sf::RenderWindow& window)
 
 void GameLayer::OnInit()
 {
-	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
-
 	m_Sound.PlayGameStartSound();
 	memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
-	m_CurrentTetromino = CreateTetromino();
-	m_PlayAgainButton = std::make_unique<Button>(770.f, 400.f, 350.f, 50.f, *s_Arcade_Font, "PLAY AGAIN", 30, sf::Color::Blue, sf::Color::Green);
+	/*for (int i = 0; i < 15; i++)
+	{
+		int random = rand() % 7;
+		m_Tetromino_queue.push_back(random);
+		std::cout << random << " ,";
+	}*/
+
+	CheckAndFillQueue(m_Tetromino_queue);
+
+
+	TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
+	Tetromino tetromino(type);
+	m_NextTetromino = tetromino;
+	m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+	m_NextTetromino.posX = 14.0;
+	m_NextTetromino.posY = 4.0;
+
+	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+	m_PlayAgainButton = std::make_unique<Button>(750.f, 700.f, 350.f, 50.f, *s_Arcade_Font, "PLAY AGAIN", 30, sf::Color::Blue, sf::Color::Green);
+	
 	m_LastTime = clock.getElapsedTime().asSeconds();
 
 	m_NextTetrominoText.setFont(*s_Arcade_Font);
@@ -360,10 +400,6 @@ void GameLayer::OnInit()
 	m_NextTetrominoBox.setSize(sf::Vector2f(300, 200));
 	m_NextTetrominoBox.setPosition(sf::Vector2f(750, 400));
 	m_NextTetrominoBox.setFillColor(sf::Color(128, 128, 128));
-
-	m_NextTetromino = CreateTetromino();
-	m_NextTetromino.posX = 14.0;
-	m_NextTetromino.posY = 4.0;
 }
 
 void GameLayer::OnShutdown()
@@ -402,7 +438,14 @@ void GameLayer::OnUpdate()
 		if (m_CurrentTetromino.posY <= 0 && m_CurrentTetromino.m_landed)
 			s_GameOver = true;
 		if (!s_GameOver)
-			m_CurrentTetromino = CreateTetromino();
+		{
+			TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
+			Tetromino tetromino(type);
+			m_NextTetromino = tetromino;
+			m_NextTetromino.posX = 14.0;
+			m_NextTetromino.posY = 4.0;
+			m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);		
+		}
 	}
 	m_BackButton->DrawButton(window);
 	m_BackButton->GetPressed(mouse_position);

@@ -12,6 +12,7 @@
 #include <chrono>
 #include "Sound.h"
 #include <stack>
+#include <deque>
 
 class Layer
 {
@@ -44,6 +45,7 @@ public:
 private:
 	Tetromino m_CurrentTetromino;
 	Tetromino m_NextTetromino;
+	std::deque<int> m_Tetromino_queue;
 
 	// why can't I do this in the header file?
 	//TetrominoType type = TetrominoType::I;
