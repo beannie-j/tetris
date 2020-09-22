@@ -293,7 +293,6 @@ static void CheckAndFillQueue(std::deque<int>& deque)
 
 static Tetromino CreateTetromino(std::deque<int>& deque)
 {
-	//int random = rand() % 7;
 	TetrominoType type = GetTypeFromNumeration(deque.front());
 	Tetromino tetromino(type);
 
@@ -369,15 +368,7 @@ void GameLayer::OnInit()
 	m_Sound.PlayGameStartSound();
 	memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
-	/*for (int i = 0; i < 15; i++)
-	{
-		int random = rand() % 7;
-		m_Tetromino_queue.push_back(random);
-		std::cout << random << " ,";
-	}*/
-
 	CheckAndFillQueue(m_Tetromino_queue);
-
 
 	TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
 	Tetromino tetromino(type);
