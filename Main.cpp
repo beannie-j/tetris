@@ -15,6 +15,7 @@
 #include "Sound.h"
 #include <stack>
 
+// static variables outside a class
 static Layer* s_CurrentLayer = nullptr;
 static sf::RenderWindow* s_Window = nullptr;
 static Database* s_Database = nullptr;
