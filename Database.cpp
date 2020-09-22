@@ -75,7 +75,7 @@ void Database::OnInit()
 {
 	/* Open database */
 	int rc;
-	rc = sqlite3_open("test.db", &m_db);
+	rc = sqlite3_open("resources/test.db", &m_db);
 	if (rc) {
 		fprintf(stderr, "[ERROR]Can't open database: %s\n", sqlite3_errmsg(m_db));
 	}

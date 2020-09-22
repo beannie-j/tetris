@@ -558,7 +558,7 @@ void ScoreBoardLayer::OnInit()
 	m_title.setPosition(300.f, 80.f);
 	m_title.setString("HIGH SCORES");
 
-	m_Gold_Texture.loadFromFile("first.png");
+	m_Gold_Texture.loadFromFile("resources/first.png");
 	m_Gold_Sprite.setTexture(m_Gold_Texture);
 	m_Gold_Sprite.setScale(0.2f, 0.2f);
 	m_Gold_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
@@ -570,7 +570,7 @@ void ScoreBoardLayer::OnInit()
 	m_entry1.setFillColor(sf::Color::White);
 	m_entry1.setPosition(x, spacing * i++);
 
-	m_Silver_Texture.loadFromFile("second.png");
+	m_Silver_Texture.loadFromFile("resources/second.png");
 	m_Silver_Sprite.setTexture(m_Silver_Texture);
 	m_Silver_Sprite.setScale(0.2f, 0.2f);
 	m_Silver_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
@@ -582,7 +582,7 @@ void ScoreBoardLayer::OnInit()
 	m_entry2.setFillColor(sf::Color::White);
 	m_entry2.setPosition(x, spacing * i++);
 
-	m_Bronze_Texture.loadFromFile("third.png");
+	m_Bronze_Texture.loadFromFile("resources/third.png");
 	m_Bronze_Sprite.setTexture(m_Bronze_Texture);
 	m_Bronze_Sprite.setScale(0.2f, 0.2f);
 	m_Bronze_Sprite.setPosition(x - 150.f, spacing * i - 20.f);

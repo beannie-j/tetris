@@ -75,7 +75,7 @@ static void Init()
 
     // Initialize fonts
     s_Arcade_Font = new sf::Font();
-    s_Arcade_Font->loadFromFile("prstart.ttf");
+    s_Arcade_Font->loadFromFile("resources/prstart.ttf");
 
 	/*Database init here*/
     s_Database = new Database();
