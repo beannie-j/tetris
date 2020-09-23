@@ -273,16 +273,48 @@ void Tetromino::Rotate_HardCoded(RotationState rotation_state)
 
 bool Tetromino::MoveDown(float dy)
 {
-    if (CheckBounds())
+    if (YBoundsCollision()) return false;
+    if (CollisionWithBlocks(0, 1))
     {
+        std::cout << " can you stop moving down??" << std::endl;
+        posY -= dy;
+        return false;
+    }
+
+    posY += dy;
+    return true;
+
+    /*
+    if (!YBoundsCollision() && !CollisionWithBlocks())
+    {
+        std::cout << "moving down" << std::endl;
         posY += dy;
         return true;
     }
-    this->m_landed = true;
+    std::cout << "move down stop" << std::endl;*/
+    //return false;
+}
+
+bool Tetromino::YBoundsCollision()
+{
+    for (int y = 0; y < m_size; y++)
+    {
+        for (int x = 0; x < m_size; x++)
+        {
+            if (m_arr[y][x] == 0) continue;
+            // checks for y bounds
+            if ((y + posY) * block_size > ((GameBoard::Height - 2) * block_size))
+            {
+                std::cout << "Y bounds collision" << std::endl;
+                return true;
+            }
+        }
+    }
     return false;
 }
 
-bool Tetromino::CheckBounds()
+
+bool Tetromino::XBoundsCollision()
 {
     for (int y = 0; y < m_size; y++)
     {
@@ -290,23 +322,56 @@ bool Tetromino::CheckBounds()
         {
             if (m_arr[y][x] == 0) continue;
 
-            if ((posX + x) * block_size < 0 || (posX + x) * block_size >= ((GameBoard::Width)*block_size) - cell_size) return false;
-            if ((y + posY) * block_size >= ((GameBoard::Height - 1) * block_size) - (block_size))
-            {
-                m_landed = true;
-                return false;
-            }
+            // checks for x bounds
+            if ((posX + x) * block_size < 0 || (posX + x) * block_size >= ((GameBoard::Width) * block_size) - cell_size) return true;
+        }
+    }
+    return false;
+}
 
-            int potentialPosition = (x + posX) + (y + posY + 2) * GameBoard::Width;
-            // std::cout << " position : check bounds" << x + posX << " , " << y + posY << " m_landed:";
+bool Tetromino::CollisionWithBlocks(float dx, float dy)
+{
+    /*for (int yc = 0; yc < m_size; yc++)
+    {
+        for (int xc = 0; xx < m_size; x++)
+        {
+            if (m_arr[yc][xc] == 0) continue;
+
+            /*int potentialPosition = (x + posX) + (y + posY) * GameBoard::Width;
             if (GameBoard::PlayingArea[potentialPosition])
             {
-                m_landed = true;
-                return false;
+                std::cout << "collision with other block" << std::endl;
+                return true;
             }
         }
     }
-    return true;
+    return false;*/
+
+    {
+        float x = posX + dx;
+        float y = posY + dy;
+
+        for (int yc = 0; yc < 4; yc++)
+        {
+            for (int xc = 0; xc < 4; xc++)
+            {
+                if (m_arr[yc][xc] != 0)
+                {
+                    float actualXPosition = xc + x;
+                    float actualYPosition = yc + y;
+                    if (GameBoard::PlayingArea[actualXPosition + actualYPosition * GameBoard::Width])
+                    {
+                        std::cout << "collision with other" << std::endl;
+                        // how to slow down the collision
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
 }
 
 void Tetromino::Draw(sf::RenderWindow& window)

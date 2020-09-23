@@ -27,12 +27,14 @@ public:
     float posX = 3.0f;
     float posY = 0.f;
     sf::Color m_color;
-    bool m_landed = false;
+    //bool m_landed = false;
 
     Tetromino(TetrominoType type);
     void Draw(sf::RenderWindow& window);
     bool MoveDown(float dy);
-    bool CheckBounds();
+    bool CollisionWithBlocks(float dx, float dy);
+    bool XBoundsCollision();
+    bool YBoundsCollision();
     void Rotate_HardCoded(RotationState rotation_state);
     static constexpr float block_size = 40.f;
 
