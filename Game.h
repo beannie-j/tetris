@@ -14,7 +14,7 @@ const std::array<char, 7> types = { 'I', 'O', 'T', 'S', 'Z', 'J', 'L' };
 struct GameBoard
 {
     inline static constexpr int Width = 10;
-    inline static constexpr int Height = 16;
+    inline static constexpr int Height = 17;
     inline static std::array<int, Width* Height> PlayingArea;
 };
 

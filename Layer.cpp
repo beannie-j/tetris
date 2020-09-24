@@ -437,6 +437,7 @@ void GameLayer::OnUpdate()
 		m_LastTime = now;
 	}
 	// need to fix for the ybounds collision status
+	
 	if (m_CurrentTetromino.YBoundsCollision()) 
 	{
 		++points;
@@ -449,6 +450,7 @@ void GameLayer::OnUpdate()
 		m_NextTetromino.posY = 4.0;
 		m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
 	}
+	
 
 	m_BackButton->DrawButton(window);
 	m_BackButton->GetPressed(mouse_position);
@@ -538,7 +540,12 @@ void GameLayer::OnEvent(sf::Event& event)
 
 			if (m_CurrentTetromino.YBoundsCollision())
 			{
-				m_CurrentTetromino.posY += 0;
+				m_CurrentTetromino.posY -= cell_size;
+			}
+
+			if (m_CurrentTetromino.CollisionWithBlocks(0, 0))
+			{
+				m_CurrentTetromino.posY -= cell_size;
 			}
 		}
 
