@@ -396,6 +396,16 @@ void GameLayer::OnShutdown()
 
 }
 
+void GameLayer::SpawnNextBlock()
+{
+	TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
+	Tetromino tetromino(type);
+	m_NextTetromino = tetromino;
+	m_NextTetromino.posX = 14.0;
+	m_NextTetromino.posY = 4.0;
+	m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+}
+
 void GameLayer::OnUpdate()
 {
 	sf::RenderWindow& window = GetWindow();
@@ -413,43 +423,34 @@ void GameLayer::OnUpdate()
 
 	float now = clock.getElapsedTime().asSeconds();
 
-	if (now - m_LastTime >= 0.5f)
+	if (now - m_LastTime >= 0.6f)
 	{
-		//m_CurrentTetromino.MoveDown(cell_size);
-
 		if (!m_CurrentTetromino.CollisionWithBlocks(0, 1))
 		{
 			m_CurrentTetromino.posY += cell_size;
 		}
-
 		else
 		{
 			++points;
 			CommitBlock(m_CurrentTetromino);
 			m_Sound.PlayLandedSound();
-			TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
-			Tetromino tetromino(type);
-			m_NextTetromino = tetromino;
-			m_NextTetromino.posX = 14.0;
-			m_NextTetromino.posY = 4.0;
-			m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+
+			SpawnNextBlock();
+
 		}
 		m_LastTime = now;
 	}
 	// need to fix for the ybounds collision status
 	
-	if (m_CurrentTetromino.YBoundsCollision()) 
+	if (m_CurrentTetromino.YBoundsCollision())
 	{
 		++points;
 		CommitBlock(m_CurrentTetromino);
 		m_Sound.PlayLandedSound();
-		TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
-		Tetromino tetromino(type);
-		m_NextTetromino = tetromino;
-		m_NextTetromino.posX = 14.0;
-		m_NextTetromino.posY = 4.0;
-		m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+
+		SpawnNextBlock();
 	}
+
 	
 
 	m_BackButton->DrawButton(window);
@@ -522,6 +523,11 @@ void GameLayer::OnEvent(sf::Event& event)
 			{
 				m_CurrentTetromino.posX += cell_size;
 			}
+
+			if (m_CurrentTetromino.CollisionWithBlocks(0, 0))
+			{
+				m_CurrentTetromino.posX += cell_size;
+			}
 		}
 
 		if (event.key.code == sf::Keyboard::Right)
@@ -529,6 +535,11 @@ void GameLayer::OnEvent(sf::Event& event)
 			m_CurrentTetromino.posX += cell_size;
 
 			if (m_CurrentTetromino.XBoundsCollision())
+			{
+				m_CurrentTetromino.posX -= cell_size;
+			}
+
+			if (m_CurrentTetromino.CollisionWithBlocks(0, 0))
 			{
 				m_CurrentTetromino.posX -= cell_size;
 			}

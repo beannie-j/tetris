@@ -42,6 +42,7 @@ public:
 
 	virtual void OnUpdate() override;
 	virtual void OnEvent(sf::Event& event) override;
+	void SpawnNextBlock();
 private:
 	Tetromino m_CurrentTetromino;
 	Tetromino m_NextTetromino;
