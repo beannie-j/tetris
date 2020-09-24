@@ -66,8 +66,7 @@ static bool CheckGameOver(Tetromino curr)
 		for (int x = 0; x < curr.m_size; x++)
 		{
 			if (curr.m_arr[y][x] == 0) continue;
-			int pos = (x + curr.posX) + (y + curr.posY) * GameBoard::Width;
-			if (GameBoard::PlayingArea[pos] && curr.CollisionWithBlocks(0, 0))
+			if (curr.CollisionWithBlocks(0, 0))
 			{
 				s_GameOver = true;
 			}
@@ -76,7 +75,7 @@ static bool CheckGameOver(Tetromino curr)
 	return true;
 }
 
-static void DrawGameBoard_GameOver(sf::RenderWindow& window)
+static void PaintGameBoardRed(sf::RenderWindow& window)
 {
 	sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
 
@@ -173,14 +172,11 @@ void MainMenuLayer::OnUpdate()
 
 void MainMenuLayer::OnEvent(sf::Event& event)
 {
-	m_Sound_Stack = GetSoundStack();
-
 	if (event.type == sf::Event::KeyReleased)
 	{
 		if (event.key.code == sf::Keyboard::Up)
 		{
 			m_Menu->MoveUp();
-			//m_Sound_Stack.push(m_Sound.m_Click_Sound);
 			m_Sound.PlayClickSound();
 		}
 		
@@ -188,13 +184,11 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 		{
 			m_Menu->MoveDown();
 			m_Sound.PlayClickSound();
-			//m_Sound_Stack.push(m_Sound.m_Click_Sound);
 		}
 
 		if (event.key.code == sf::Keyboard::Enter)
 		{
 			m_Sound.PlaySelectSound();
-			m_Sound_Stack.push(m_Sound.m_Select_Sound);
 			std::cout << "[Key] Enter\n";
 			switch (m_Menu->GetPressedItem())
 			{
@@ -398,6 +392,7 @@ void GameLayer::OnShutdown()
 
 void GameLayer::SpawnNextBlock()
 {
+	std::cout << "Spawning next block..." << std::endl;
 	TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
 	Tetromino tetromino(type);
 	m_NextTetromino = tetromino;
@@ -417,7 +412,7 @@ void GameLayer::OnUpdate()
 		DrawPoints(window, points);
 		DrawUsername(window);
 	}
-	//CheckGameOver(m_CurrentTetromino);
+	CheckGameOver(m_CurrentTetromino);
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
@@ -431,27 +426,28 @@ void GameLayer::OnUpdate()
 		}
 		else
 		{
-			++points;
-			CommitBlock(m_CurrentTetromino);
-			m_Sound.PlayLandedSound();
-
-			SpawnNextBlock();
-
+			if (!s_GameOver)
+			{
+				++points;
+				CommitBlock(m_CurrentTetromino);
+				m_Sound.PlayLandedSound();
+				SpawnNextBlock();
+			}
 		}
 		m_LastTime = now;
 	}
 	// need to fix for the ybounds collision status
-	
 	if (m_CurrentTetromino.YBoundsCollision())
 	{
-		++points;
-		CommitBlock(m_CurrentTetromino);
-		m_Sound.PlayLandedSound();
-
-		SpawnNextBlock();
+		// problem is here...
+		if (!s_GameOver)
+		{
+			++points;
+			CommitBlock(m_CurrentTetromino);
+			m_Sound.PlayLandedSound();
+			SpawnNextBlock();
+		}
 	}
-
-	
 
 	m_BackButton->DrawButton(window);
 	m_BackButton->GetPressed(mouse_position);
@@ -478,6 +474,7 @@ void GameLayer::OnUpdate()
 			m_db_updated = true;
 		}
 
+		// draw game over
 		sf::Text text;
 		text.setFont(*s_Arcade_Font);
 		text.setFillColor(sf::Color(254, 0, 2));
@@ -488,8 +485,9 @@ void GameLayer::OnUpdate()
 		window.draw(text);
 		m_CurrentTetromino.m_color = sf::Color::Transparent;
 
-		DrawGameBoard_GameOver(window);
+		PaintGameBoardRed(window);
 
+		// draw score
 		sf::Text score_text;
 		score_text.setFont(*s_Arcade_Font);
 		score_text.setFillColor(sf::Color::Yellow);
@@ -507,7 +505,6 @@ void GameLayer::OnUpdate()
 			s_GameOver = false;
 			SetLayer(new TimerLayer());
 		}
-
 	}
 }
 
@@ -642,7 +639,6 @@ void ScoreBoardLayer::OnInit()
 
 void ScoreBoardLayer::OnShutdown()
 {
-
 }
 
 void ScoreBoardLayer::OnUpdate()

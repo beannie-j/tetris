@@ -18,23 +18,12 @@ struct GameBoard
     inline static std::array<int, Width* Height> PlayingArea;
 };
 
-struct cmp
-{
-    template<typename T, typename U>
-    bool operator() (T const& lhs, U const& rhs) const
-    {
-        return lhs.second < rhs.second;
-    }
-};
-
 // inline - same across all compile unit
 inline int s_Score = 0;
 inline bool s_GameOver = false;
 inline sf::Font* s_Arcade_Font;
 inline std::string s_Username;
 inline int s_shift = 7;
-inline std::priority_queue<std::pair<std::string, int>,
-    std::vector<std::pair<std::string, int>>, cmp> s_priority_queue;
 
 constexpr float block_size = 40.f;
 constexpr int Window_Width = 30 * block_size;
@@ -44,8 +33,6 @@ sf::RenderWindow& GetWindow();
 
 class Database;
 Database& GetDatabase();
-
-std::stack<sf::Sound>& GetSoundStack();
 
 class Sound;
 Sound& GetSound();

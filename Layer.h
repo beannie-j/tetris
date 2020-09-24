@@ -25,7 +25,6 @@ public:
 	// Sound m_Sound = GetSound();- this just copies
 	//basically calls Sound(const Sound&)
 	//Sound* m_Sound = GetSound();
-	std::stack<sf::Sound> m_Sound_Stack;
 
 	virtual void OnInit() {}
 	virtual void OnShutdown() {}

@@ -13,14 +13,13 @@
 #include <sqlite3.h>
 #include "Database.h"
 #include "Sound.h"
-#include <stack>
+#include "Application.h"
 
 // static variables outside a class
 static Layer* s_CurrentLayer = nullptr;
 static sf::RenderWindow* s_Window = nullptr;
 static Database* s_Database = nullptr;
 static Sound* s_Sound = nullptr;
-static std::stack<sf::Sound>* s_Sound_Stack = new std::stack<sf::Sound>();
 
 static void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height)
 {
@@ -40,19 +39,7 @@ static void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height
         s_CurrentLayer->OnUpdate();
 
         s_Window->display();
-        
-        if (!s_Sound_Stack->empty())
-        {
-            std::cout << "lets play sound" << std::endl;
-            s_Sound_Stack->top().play();
-            s_Sound_Stack->pop();
-        }
     }
-}
-
-std::stack<sf::Sound>& GetSoundStack()
-{
-	return *s_Sound_Stack;
 }
 
 sf::RenderWindow& GetWindow()
@@ -97,7 +84,6 @@ static void Shutdown()
     delete s_Window;
     delete s_Database;
     delete s_Sound;
-    delete s_Sound_Stack;
 }
 
 template<typename T>
