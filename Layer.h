@@ -13,20 +13,18 @@
 #include "Sound.h"
 #include <stack>
 #include <deque>
-#include "Application.h"
-
-class Application;
-Application& GetApplication();
 
 class Layer
 {
 public:
 	Layer() = default;
 	virtual ~Layer() = default;
-
-	Application& m_Application = GetApplication();
-	Database& m_Database = m_Application.GetDatabase();
-	Sound& m_Sound = m_Application.GetSound();
+	Database& m_Database = GetDatabase();
+	// make sure &m_sound not m_Sound
+	Sound& m_Sound = GetSound();
+	// Sound m_Sound = GetSound();- this just copies
+	//basically calls Sound(const Sound&)
+	//Sound* m_Sound = GetSound();
 
 	virtual void OnInit() {}
 	virtual void OnShutdown() {}
@@ -49,10 +47,6 @@ private:
 	Tetromino m_NextTetromino;
 	std::deque<int> m_Tetromino_queue;
 
-	// why can't I do this in the header file?
-	//TetrominoType type = TetrominoType::I;
-	//Tetromino m_NextTetromino(type);
-
 	sf::Clock clock;
 	float m_LastTime = 0.0f;
 	int points = 0;
@@ -61,6 +55,26 @@ private:
 	std::unique_ptr<Button> m_BackButton;
 	sf::Text m_NextTetrominoText;
 	sf::RectangleShape m_NextTetrominoBox;
+
+	void DrawUsername(sf::RenderWindow& window);
+	void DrawPoints(sf::RenderWindow& window, int points);
+	int GetColorInt(Tetromino tetromino);
+	TetrominoType GetTypeFromNumeration(int number);
+	bool CheckGameOver(Tetromino curr);
+	void PaintGameBoardRed(sf::RenderWindow& window);
+	void DrawGameBoard(sf::RenderWindow& window);
+	void CheckAndFillQueue(std::deque<int>& deque);
+	Tetromino CreateTetromino(std::deque<int>& deque);
+	void CommitBlock(const Tetromino& tetromino);
+	void ClearRow(sf::RenderWindow& window);
+
+
+
+
+
+
+
+
 };
 
 class MainMenuLayer : public Layer
@@ -135,5 +149,3 @@ private:
 	sf::Text m_entry3;
 	sf::Text m_score3;
 };
-
-

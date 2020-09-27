@@ -13,10 +13,9 @@
 #include <sqlite3.h>
 #include "Database.h"
 #include "Sound.h"
-#include "Game.h"
-/*
-* 
-* // static variables outside a class
+#include "Application.h"
+
+// static variables outside a class
 static Layer* s_CurrentLayer = nullptr;
 static sf::RenderWindow* s_Window = nullptr;
 static Database* s_Database = nullptr;
@@ -50,7 +49,7 @@ sf::RenderWindow& GetWindow()
 
 Database& GetDatabase()
 {
-	return *s_Database;
+    return *s_Database;
 }
 
 Sound& GetSound()
@@ -66,6 +65,7 @@ static void Init()
     s_Arcade_Font = new sf::Font();
     s_Arcade_Font->loadFromFile("resources/prstart.ttf");
 
+    /*Database init here*/
     s_Database = new Database();
     s_Database->OnInit();
     s_Database->CreateScoreTable();
@@ -73,11 +73,14 @@ static void Init()
 
     s_Sound = new Sound();
     s_Sound->Init();
+
 }
 
 static void Shutdown()
 {
     delete s_Arcade_Font;
+
+    // Destroy window
     delete s_Window;
     delete s_Database;
     delete s_Sound;
@@ -105,18 +108,19 @@ void SetLayer(Layer* layer)
     s_CurrentLayer = layer;
     s_CurrentLayer->OnInit();
 }
-*/
-static Application* s_Instance = new Application("Tetris");
-
-Application& GetApplication()
-{
-    //assert(s_Instance);
-    return *s_Instance;
-}
 
 int main()
 {
-    s_Instance->Init();
-    s_Instance->Run();
+    srand((unsigned int)time(NULL));
+
+    Init();
+
+    //CreateAndSetLayer<MainMenuLayer>();
+    SetLayer(new MainMenuLayer());
+
+    DrawMainWindow(Window_Width, Window_Height);
+
+    Shutdown();
+
     return 0;
 }
