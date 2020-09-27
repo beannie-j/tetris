@@ -33,34 +33,6 @@ public:
 	virtual void OnEvent(sf::Event& event) {}
 };
 
-class GameLayer : public Layer
-{
-public:
-	virtual void OnInit() override;
-	virtual void OnShutdown() override;
-
-	virtual void OnUpdate() override;
-	virtual void OnEvent(sf::Event& event) override;
-	void SpawnNextBlock();
-private:
-	Tetromino m_CurrentTetromino;
-	Tetromino m_NextTetromino;
-	std::deque<int> m_Tetromino_queue;
-
-	// why can't I do this in the header file?
-	//TetrominoType type = TetrominoType::I;
-	//Tetromino m_NextTetromino(type);
-
-	sf::Clock clock;
-	float m_LastTime = 0.0f;
-	int points = 0;
-	std::unique_ptr<Button> m_PlayAgainButton;
-	bool m_db_updated = false;
-	std::unique_ptr<Button> m_BackButton;
-	sf::Text m_NextTetrominoText;
-	sf::RectangleShape m_NextTetrominoBox;
-};
-
 class MainMenuLayer : public Layer
 {
 public:
