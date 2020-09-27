@@ -14,6 +14,7 @@
 #include "Database.h"
 #include "Sound.h"
 #include "Application.h"
+#include "MainMenuLayer.h"
 
 // static variables outside a class
 static Layer* s_CurrentLayer = nullptr;
