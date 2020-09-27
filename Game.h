@@ -29,7 +29,7 @@ constexpr float block_size = 40.f;
 constexpr int Window_Width = 30 * block_size;
 constexpr int Window_Height = 30 * block_size;
 
-sf::RenderWindow& GetWindow();
+/*sf::RenderWindow& GetWindow();
 
 class Database;
 Database& GetDatabase();
@@ -41,7 +41,8 @@ class Layer;
 void SetLayer(Layer* layer);
 
 template<typename T>
-void CreateAndSetLayer();
+void CreateAndSetLayer();*/
+
 
 inline sf::Color s_Colors[10] =
 {

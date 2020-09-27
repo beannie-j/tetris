@@ -5,6 +5,8 @@
 #include <chrono> 
 #include <ctime> 
 
+class Application;
+
 static void DrawUsername(sf::RenderWindow& window)
 {
 	sf::Text text;
@@ -154,7 +156,7 @@ void MainMenuLayer::OnShutdown()
 
 void MainMenuLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
+	sf::RenderWindow& window = m_Application.GetWindow();
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
@@ -197,16 +199,16 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 			case 0:
 				std::cout << "[Key] Play Button pressed\n";
 				m_Sound.PlaySelectSound();
-				SetLayer(new PreGameLayer());
+				m_Application.SetLayer(new PreGameLayer());
 				break;
 			case 1:
 				std::cout << "[Key] Scores Button pressed\n";
 				m_Sound.PlaySelectSound();
-				SetLayer(new ScoreBoardLayer());
+				m_Application.SetLayer(new ScoreBoardLayer());
 				break;
 			case 2:
 				std::cout << "[Key] Exit Button pressed\n";
-				GetWindow().close();
+				m_Application.GetWindow().close();
 				break;
 			}
 		}
@@ -227,7 +229,7 @@ void PreGameLayer::OnShutdown()
 
 void PreGameLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
+	sf::RenderWindow& window = m_Application.GetWindow();
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 	// Draw some graphical entities
 	sf::Text askNameText;
@@ -252,7 +254,7 @@ void PreGameLayer::OnUpdate()
 	{
 		std::cout << "[INFO] Back Button pressed" << std::endl;
 		m_Sound.PlaySelectSound();
-		SetLayer(new MainMenuLayer());
+		m_Application.SetLayer(new MainMenuLayer());
 	}
 }
 
@@ -268,7 +270,7 @@ void PreGameLayer::OnEvent(sf::Event& event)
 		std::cout << "[Key] Enter, Username : " << m_TextBox->getString() << std::endl;
 		s_Username = m_TextBox->getString();
 		m_PlayButton->FillColor();
-		SetLayer(new TimerLayer());
+		m_Application.SetLayer(new TimerLayer());
 	}
 }
 
@@ -339,7 +341,7 @@ static void ClearRow(sf::RenderWindow& window)
 			if (block) count += 1;
 			if (count == GameBoard::Width)
 			{
-				GetSound().PlayBreakSound();
+				//m_Sound.PlayBreakSound();
 				for (int x = 0; x < GameBoard::Width; x++) {
 					int i = y;
 					int j = 0;
@@ -403,7 +405,7 @@ void GameLayer::SpawnNextBlock()
 
 void GameLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
+	sf::RenderWindow& window = m_Application.GetWindow();
 	DrawGameBoard(window);
 	m_CurrentTetromino.Draw(window);
 	ClearRow(window);
@@ -461,7 +463,7 @@ void GameLayer::OnUpdate()
 		std::cout << "[INFO] Back Button pressed" << std::endl;
 		m_Sound.PlaySelectSound();
 		s_GameOver = false;
-		SetLayer(new MainMenuLayer());
+		m_Application.SetLayer(new MainMenuLayer());
 	}
 
 	if (s_GameOver)
@@ -503,7 +505,7 @@ void GameLayer::OnUpdate()
 		if (m_PlayAgainButton->m_buttonState == PRESSED)
 		{
 			s_GameOver = false;
-			SetLayer(new TimerLayer());
+			m_Application.SetLayer(new TimerLayer());
 		}
 	}
 }
@@ -643,8 +645,8 @@ void ScoreBoardLayer::OnShutdown()
 
 void ScoreBoardLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
-	Database& database = GetDatabase();
+	sf::RenderWindow& window = m_Application.GetWindow();
+	Database& database = m_Application.GetDatabase();
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
@@ -671,7 +673,7 @@ void ScoreBoardLayer::OnUpdate()
 	{
 		std::cout << "Back Button pressed" << std::endl;
 		m_Sound.PlaySelectSound();
-		SetLayer(new MainMenuLayer());
+		m_Application.SetLayer(new MainMenuLayer());
 	}
 }
 
@@ -680,7 +682,7 @@ void ScoreBoardLayer::OnEvent(sf::Event& event)
 	if (event.key.code == sf::Keyboard::Escape)
 	{
 		m_Sound.PlaySelectSound();
-		SetLayer(new MainMenuLayer());
+		m_Application.SetLayer(new MainMenuLayer());
 	}
 }
 
@@ -706,7 +708,7 @@ void TimerLayer::OnShutdown()
 
 void TimerLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();	
+	sf::RenderWindow& window = m_Application.GetWindow();
 	std::chrono::time_point<std::chrono::system_clock> begin = std::chrono::system_clock::now();
 	auto time_difference = (std::chrono::duration_cast<std::chrono::microseconds>(begin - m_SecondsSinceStart).count()) / 1000000.0;
 	auto timer = m_timer - (int)time_difference;
@@ -718,7 +720,7 @@ void TimerLayer::OnUpdate()
 
 	if (timer < 0)
 	{
-		SetLayer(new GameLayer());
+		m_Application.SetLayer(new GameLayer());
 	}
 }
 

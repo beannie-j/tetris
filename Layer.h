@@ -13,18 +13,20 @@
 #include "Sound.h"
 #include <stack>
 #include <deque>
+#include "Application.h"
+
+class Application;
+Application& GetApplication();
 
 class Layer
 {
 public:
 	Layer() = default;
 	virtual ~Layer() = default;
-	Database& m_Database = GetDatabase();
-	// make sure &m_sound not m_Sound
-	Sound& m_Sound = GetSound(); 
-	// Sound m_Sound = GetSound();- this just copies
-	//basically calls Sound(const Sound&)
-	//Sound* m_Sound = GetSound();
+
+	Application& m_Application = GetApplication();
+	Database& m_Database = m_Application.GetDatabase();
+	Sound& m_Sound = m_Application.GetSound();
 
 	virtual void OnInit() {}
 	virtual void OnShutdown() {}

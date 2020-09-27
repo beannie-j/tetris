@@ -22,8 +22,6 @@ void Sound::Init()
 	m_Break_Sound.setBuffer(m_Break_SoundBuffer);
 }
 
-
-
 void Sound::PlaySelectSound()
 {
 	m_Select_Sound.play();
