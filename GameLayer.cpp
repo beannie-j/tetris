@@ -1,5 +1,6 @@
 #include "GameLayer.h"
 #include "MainMenuLayer.h"
+#include "TimerLayer.h"
 
 void GameLayer::DrawUsername(sf::RenderWindow& window)
 {

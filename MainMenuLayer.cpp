@@ -1,4 +1,6 @@
 #include "MainMenuLayer.h"
+#include "ScoreBoardLayer.h"
+#include "PreGameLayer.h"
 
 void MainMenuLayer::OnInit()
 {
