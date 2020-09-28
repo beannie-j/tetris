@@ -17,7 +17,7 @@
 #include "MainMenuLayer.h"
 
 // static variables outside a class
-static Layer* s_CurrentLayer = nullptr;
+/*static Layer* s_CurrentLayer = nullptr;
 static sf::RenderWindow* s_Window = nullptr;
 static Database* s_Database = nullptr;
 static Sound* s_Sound = nullptr;
@@ -66,26 +66,23 @@ static void Init()
     s_Arcade_Font = new sf::Font();
     s_Arcade_Font->loadFromFile("resources/prstart.ttf");
 
-	/*Database init here*/
     s_Database = new Database();
     s_Database->OnInit();
     s_Database->CreateScoreTable();
     s_Database->GetScoreList();
 
     s_Sound = new Sound();
-    s_Sound->Init();
-    
+    s_Sound->Init();  
 }
 
 static void Shutdown()
 {
     delete s_Arcade_Font;
-
-    // Destroy window
     delete s_Window;
     delete s_Database;
     delete s_Sound;
 }
+
 
 template<typename T>
 void CreateAndSetLayer()
@@ -123,5 +120,16 @@ int main()
 
     Shutdown();
 
+    return 0;
+}
+*/
+
+static Application* s_Instance = new Application("Tetris");
+
+int main()
+{
+    s_Instance->Init();
+    s_Instance->Run();
+    s_Instance->Shutdown();
     return 0;
 }

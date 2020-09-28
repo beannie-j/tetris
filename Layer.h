@@ -14,12 +14,14 @@
 #include <stack>
 #include <deque>
 #include "Database.h"
+#include "Application.h"
 
 class Layer
 {
 public:
 	Layer() = default;
 	virtual ~Layer() = default;
+	//Application& m_Application = GetApplication();
 	Database& m_Database = GetDatabase();
 	// make sure &m_sound not m_Sound
 	Sound& m_Sound = GetSound(); 
