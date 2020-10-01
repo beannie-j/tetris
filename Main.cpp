@@ -124,12 +124,10 @@ int main()
 }
 */
 
-static Application* s_Instance = new Application("Tetris");
-
 int main()
 {
-    s_Instance->Init();
-    s_Instance->Run();
-    s_Instance->Shutdown();
-    return 0;
+    Application application("Tetris");
+    application.Init();
+    application.Run();
+    application.Shutdown();
 }

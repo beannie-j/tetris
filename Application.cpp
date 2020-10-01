@@ -1,11 +1,17 @@
 #include "Application.h"
 #include "MainMenuLayer.h"
 
+#include "Game.h"
+
 static Application* s_Instance = nullptr;
 
 Application::Application(const std::string& name)
 {
 	s_Instance = this;
+}
+
+Application::~Application()
+{
 }
 
 Application& Application::GetApplication()

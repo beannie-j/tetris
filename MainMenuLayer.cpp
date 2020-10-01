@@ -2,10 +2,13 @@
 #include "ScoreBoardLayer.h"
 #include "PreGameLayer.h"
 
+#include "Game.h"
+#include "Application.h"
+
 void MainMenuLayer::OnInit()
 {
 	// load resources
-	m_Menu = std::make_unique<Menu>(Window_Width, Window_Height - 200.f, *s_Arcade_Font);
+	m_Menu = std::make_unique<Menu>((float)Window_Width, (float)Window_Height - 200.f, *s_Arcade_Font);
 }
 
 void MainMenuLayer::OnShutdown()
@@ -15,7 +18,8 @@ void MainMenuLayer::OnShutdown()
 
 void MainMenuLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
+	auto& app = Application::GetApplication();
+	sf::RenderWindow& window = app.GetWindow();
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
@@ -33,23 +37,25 @@ void MainMenuLayer::OnUpdate()
 
 void MainMenuLayer::OnEvent(sf::Event& event)
 {
+	auto& app = Application::GetApplication();
+	auto& sound = app.GetSound();
 	if (event.type == sf::Event::KeyReleased)
 	{
 		if (event.key.code == sf::Keyboard::Up)
 		{
 			m_Menu->MoveUp();
-			m_Sound.PlayClickSound();
+			sound.PlayClickSound();
 		}
 
 		if (event.key.code == sf::Keyboard::Down)
 		{
 			m_Menu->MoveDown();
-			m_Sound.PlayClickSound();
+			sound.PlayClickSound();
 		}
 
 		if (event.key.code == sf::Keyboard::Enter)
 		{
-			m_Sound.PlaySelectSound();
+			sound.PlaySelectSound();
 			std::cout << "[Key] Enter\n";
 			switch (m_Menu->GetPressedItem())
 			{
@@ -57,17 +63,17 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 				break;
 			case 0:
 				std::cout << "[Key] Play Button pressed\n";
-				m_Sound.PlaySelectSound();
-				SetLayer(new PreGameLayer());
+				sound.PlaySelectSound();
+				app.SetLayer(new PreGameLayer());
 				break;
 			case 1:
 				std::cout << "[Key] Scores Button pressed\n";
-				m_Sound.PlaySelectSound();
-				SetLayer(new ScoreBoardLayer());
+				sound.PlaySelectSound();
+				app.SetLayer(new ScoreBoardLayer());
 				break;
 			case 2:
 				std::cout << "[Key] Exit Button pressed\n";
-				GetWindow().close();
+				app.GetWindow().close();
 				break;
 			}
 		}

@@ -1,6 +1,8 @@
 #include "TimerLayer.h"
 #include "GameLayer.h"
 
+#include "Application.h"
+
 void TimerLayer::OnShutdown()
 {
 
@@ -8,7 +10,8 @@ void TimerLayer::OnShutdown()
 
 void TimerLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
+	auto& app = Application::GetApplication();
+	sf::RenderWindow& window = app.GetWindow();
 	std::chrono::time_point<std::chrono::system_clock> begin = std::chrono::system_clock::now();
 	auto time_difference = (std::chrono::duration_cast<std::chrono::microseconds>(begin - m_SecondsSinceStart).count()) / 1000000.0;
 	auto timer = m_timer - (int)time_difference;
@@ -20,7 +23,7 @@ void TimerLayer::OnUpdate()
 
 	if (timer < 0)
 	{
-		SetLayer(new GameLayer());
+		app.SetLayer(new GameLayer());
 	}
 }
 
@@ -31,7 +34,8 @@ void TimerLayer::OnEvent(sf::Event& event)
 
 void TimerLayer::OnInit()
 {
-	m_Sound.PlaySelectSound();
+	auto& app = Application::GetApplication();
+	app.GetSound().PlaySelectSound();
 	m_game_start_text.setFont(*s_Arcade_Font);
 	m_game_start_text.setFillColor(sf::Color(107, 133, 255));
 	m_game_start_text.setCharacterSize(50);

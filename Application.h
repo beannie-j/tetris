@@ -25,9 +25,9 @@ public:
 	void DrawMainWindow(unsigned int Window_Width, unsigned int Window_Height);
 
 	void SetLayer(Layer* layer);
-	Sound& GetSound();
-	sf::RenderWindow& GetWindow();
-	Database& GetDatabase();
+	Sound& GetSound() { return *s_Sound; }
+	sf::RenderWindow& GetWindow() { return *s_Window; }
+	Database& GetDatabase() { return *s_Database; }
 
 private:
 

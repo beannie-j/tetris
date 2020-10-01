@@ -1,15 +1,18 @@
 #include "ScoreBoardLayer.h"
 #include "MainMenuLayer.h"
+#include "Application.h"
+
+#include "Game.h"
 
 void ScoreBoardLayer::OnInit()
 {
-	//Database& database = GetDatabase();
-	m_Database.GetScoreList();
+	auto& app = Application::GetApplication();
+
 	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
 
 	int i = 2;
 	int spacing = 150;
-	int x = 350.f;
+	int x = 350;
 
 	m_title.setFont(*s_Arcade_Font);
 	m_title.setCharacterSize(50);
@@ -24,10 +27,13 @@ void ScoreBoardLayer::OnInit()
 
 	m_score1.setFont(*s_Arcade_Font);
 	m_score1.setFillColor(sf::Color::White);
-	m_score1.setPosition(x + 300, spacing * i);
+	m_score1.setPosition((float)(x + 300), (float)(spacing * i));
 	m_entry1.setFont(*s_Arcade_Font);
 	m_entry1.setFillColor(sf::Color::White);
-	m_entry1.setPosition(x, spacing * i++);
+	m_entry1.setPosition((float)x, (float)(spacing * i++));
+
+	// int -> int32_t -> 32-bit (4-byte) integer
+	// float          -> 32-bit (4-byte) floating-point 
 
 	m_Silver_Texture.loadFromFile("resources/second.png");
 	m_Silver_Sprite.setTexture(m_Silver_Texture);
@@ -36,10 +42,10 @@ void ScoreBoardLayer::OnInit()
 
 	m_score2.setFont(*s_Arcade_Font);
 	m_score2.setFillColor(sf::Color::White);
-	m_score2.setPosition(x + 300, spacing * i);
+	m_score2.setPosition((float)(x + 300), (float)(spacing * i));
 	m_entry2.setFont(*s_Arcade_Font);
 	m_entry2.setFillColor(sf::Color::White);
-	m_entry2.setPosition(x, spacing * i++);
+	m_entry2.setPosition((float)x, (float)(spacing * i++));
 
 	m_Bronze_Texture.loadFromFile("resources/third.png");
 	m_Bronze_Sprite.setTexture(m_Bronze_Texture);
@@ -48,12 +54,12 @@ void ScoreBoardLayer::OnInit()
 
 	m_score3.setFont(*s_Arcade_Font);
 	m_score3.setFillColor(sf::Color::White);
-	m_score3.setPosition(x + 300, spacing * i);
+	m_score3.setPosition((float)(x + 300), (float)(spacing * i));
 	m_entry3.setFont(*s_Arcade_Font);
 	m_entry3.setFillColor(sf::Color::White);
-	m_entry3.setPosition(x, spacing * i++);
+	m_entry3.setPosition((float)x, (float)(spacing * i++));
 
-	auto score_list = m_Database.GetScoreList();
+	auto score_list = app.GetDatabase().GetScoreList();
 	for (const auto& score : score_list)
 	{
 		std::string str = score.first + "  " + std::to_string(score.second);
@@ -75,8 +81,9 @@ void ScoreBoardLayer::OnShutdown()
 
 void ScoreBoardLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
-	Database& database = GetDatabase();
+	Application& app = Application::GetApplication();
+	sf::RenderWindow& window = app.GetWindow();
+	Database& database = app.GetDatabase();
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
@@ -99,8 +106,8 @@ void ScoreBoardLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "Back Button pressed" << std::endl;
-		m_Sound.PlaySelectSound();
-		SetLayer(new MainMenuLayer());
+		app.GetSound().PlaySelectSound();
+		app.SetLayer(new MainMenuLayer());
 	}
 }
 
@@ -108,8 +115,9 @@ void ScoreBoardLayer::OnEvent(sf::Event& event)
 {
 	if (event.key.code == sf::Keyboard::Escape)
 	{
-		m_Sound.PlaySelectSound();
-		SetLayer(new MainMenuLayer());
+		auto& app = Application::GetApplication();
+		app.GetSound().PlaySelectSound();
+		app.SetLayer(new MainMenuLayer());
 	}
 }
 

@@ -1,6 +1,9 @@
 #include "GameLayer.h"
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
+#include "Application.h"
+
+#include "Game.h"
 
 void GameLayer::DrawUsername(sf::RenderWindow& window)
 {
@@ -40,20 +43,24 @@ int GameLayer::GetColorInt(Tetromino tetromino)
 	if (tetromino.m_type == TetrominoType::Z) return 6;
 	if (tetromino.m_type == TetrominoType::J) return 7;
 	if (tetromino.m_type == TetrominoType::L) return 8;
-
+	// assert()
+	return 0;
 }
 
 TetrominoType GameLayer::GetTypeFromNumeration(int number)
 {
-	switch (number) {
-	case 0: return TetrominoType::I;
-	case 1: return TetrominoType::O;
-	case 2: return TetrominoType::T;
-	case 3: return TetrominoType::S;
-	case 4: return TetrominoType::Z;
-	case 5: return TetrominoType::J;
-	case 6: return TetrominoType::L;
+	switch (number)
+	{
+		case 0: return TetrominoType::I;
+		case 1: return TetrominoType::O;
+		case 2: return TetrominoType::T;
+		case 3: return TetrominoType::S;
+		case 4: return TetrominoType::Z;
+		case 5: return TetrominoType::J;
+		case 6: return TetrominoType::L;
 	}
+	//asert()
+	return TetrominoType::I;
 }
 
 bool GameLayer::CheckGameOver(Tetromino curr)
@@ -158,7 +165,7 @@ Tetromino GameLayer::CreateTetromino(std::deque<int>& deque)
 
 	deque.pop_front();
 
-	for (int i = 0; i < deque.size(); i++)
+	for (size_t i = 0; i < deque.size(); i++)
 	{
 		std::cout << deque[i] << " ,";
 	}
@@ -171,8 +178,8 @@ Tetromino GameLayer::CreateTetromino(std::deque<int>& deque)
 
 void GameLayer::CommitBlock(const Tetromino& tetromino)
 {
-	int txc = tetromino.posX;
-	int tyc = tetromino.posY;
+	int txc = (int)tetromino.posX;
+	int tyc = (int)tetromino.posY;
 
 	for (int y = 0; y < tetromino.m_size; y++)
 	{
@@ -205,7 +212,8 @@ void GameLayer::ClearRow(sf::RenderWindow& window)
 			if (block) count += 1;
 			if (count == GameBoard::Width)
 			{
-				GetSound().PlayBreakSound();
+				auto& app = Application::GetApplication();
+				app.GetSound().PlayBreakSound();
 				for (int x = 0; x < GameBoard::Width; x++) {
 					int i = y;
 					int j = 0;
@@ -224,7 +232,8 @@ void GameLayer::ClearRow(sf::RenderWindow& window)
 
 void GameLayer::OnInit()
 {
-	m_Sound.PlayGameStartSound();
+	auto& app = Application::GetApplication();
+	app.GetSound().PlayGameStartSound();
 	memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
 	CheckAndFillQueue(m_Tetromino_queue);
@@ -270,7 +279,8 @@ void GameLayer::SpawnNextBlock()
 
 void GameLayer::OnUpdate()
 {
-	sf::RenderWindow& window = GetWindow();
+	auto& app = Application::GetApplication();
+	sf::RenderWindow& window = app.GetWindow();
 	DrawGameBoard(window);
 	m_CurrentTetromino.Draw(window);
 	ClearRow(window);
@@ -297,7 +307,7 @@ void GameLayer::OnUpdate()
 			{
 				++points;
 				CommitBlock(m_CurrentTetromino);
-				m_Sound.PlayLandedSound();
+				app.GetSound().PlayLandedSound();
 				SpawnNextBlock();
 			}
 		}
@@ -311,7 +321,7 @@ void GameLayer::OnUpdate()
 		{
 			++points;
 			CommitBlock(m_CurrentTetromino);
-			m_Sound.PlayLandedSound();
+			app.GetSound().PlayLandedSound();
 			SpawnNextBlock();
 		}
 	}
@@ -326,18 +336,18 @@ void GameLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "[INFO] Back Button pressed" << std::endl;
-		m_Sound.PlaySelectSound();
+		app.GetSound().PlaySelectSound();
 		s_GameOver = false;
-		SetLayer(new MainMenuLayer());
+		app.SetLayer(new MainMenuLayer());
 	}
 
 	if (s_GameOver)
 	{
 		if (!m_db_updated)
 		{
-			m_Sound.PlayGameOverSound();
-			m_Database.InsertToScoreTable(s_Username, points);
-			m_Database.GetScoreList();
+			app.GetSound().PlayGameOverSound();
+			app.GetDatabase().InsertToScoreTable(s_Username, points);
+			app.GetDatabase().GetScoreList();
 			m_db_updated = true;
 		}
 
@@ -370,7 +380,7 @@ void GameLayer::OnUpdate()
 		if (m_PlayAgainButton->m_buttonState == PRESSED)
 		{
 			s_GameOver = false;
-			SetLayer(new TimerLayer());
+			app.SetLayer(new TimerLayer());
 		}
 	}
 }

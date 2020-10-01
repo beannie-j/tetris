@@ -1,5 +1,10 @@
 #pragma once
+
 #include "Layer.h"
+#include "Button.h"
+
+#include <SFML/Graphics.hpp>
+#include <memory>
 
 class ScoreBoardLayer : public Layer
 {

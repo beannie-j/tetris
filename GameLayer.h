@@ -1,6 +1,9 @@
 #pragma once
 #include "Layer.h"
 
+#include "Tetromino.h"
+#include "Button.h"
+
 class GameLayer : public Layer
 {
 public:

@@ -1,7 +1,9 @@
 #pragma once
 #include "Layer.h"
-#include <chrono> 
-#include <ctime> 
+#include <chrono>
+#include <ctime>
+
+#include <SFML/Graphics.hpp>
 
 class TimerLayer : public Layer
 {

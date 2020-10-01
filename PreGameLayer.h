@@ -1,5 +1,11 @@
 #pragma once
+
 #include "Layer.h"
+#include "TextBox.h"
+#include "Button.h"
+
+#include <memory>
+
 class PreGameLayer : public Layer
 {
 public:

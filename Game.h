@@ -26,19 +26,8 @@ inline std::string s_Username;
 inline int s_shift = 7;
 
 constexpr float block_size = 40.f;
-constexpr int Window_Width = 30 * block_size;
-constexpr int Window_Height = 30 * block_size;
-
-sf::RenderWindow& GetWindow();
-
-class Database;
-Database& GetDatabase();
-
-class Sound;
-Sound& GetSound();
-
-class Layer;
-void SetLayer(Layer* layer);
+constexpr int Window_Width = 30 * (int)block_size;
+constexpr int Window_Height = 30 * (int)block_size;
 
 template<typename T>
 void CreateAndSetLayer();
