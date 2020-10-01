@@ -14,7 +14,11 @@ std::string TextBox::EnterText(sf::Uint16 character)
 {
 	if (character == 8) // delete
 	{
-		m_String.pop_back();
+		// Making sure that string is not empty before poping.
+		if (!m_String.empty())
+		{
+			m_String.pop_back();
+		}
 	} 
 
 	else if (character == 13) // enter key
