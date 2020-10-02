@@ -44,7 +44,7 @@ void PreGameLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "[INFO] Back Button pressed" << std::endl;
-		app.GetSound().PlaySelectSound();
+		app.GetSound().Play("select");
 		app.SetLayer(new MainMenuLayer());
 	}
 }

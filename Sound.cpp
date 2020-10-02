@@ -20,36 +20,22 @@ void Sound::Init()
 
 	m_Break_SoundBuffer.loadFromFile("resources/break.wav");
 	m_Break_Sound.setBuffer(m_Break_SoundBuffer);
+
+	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("click", m_Click_Sound));
+	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("select", m_Select_Sound));
+	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("game over", m_GameOver_Sound));
+	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("landed", m_Landed_Sound));
+	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("start", m_GameStart_Sound));
+	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("break", m_Break_Sound));
+
 }
 
-
-
-void Sound::PlaySelectSound()
+void Sound::Play(std::string name)
 {
-	m_Select_Sound.play();
-}
-
-void Sound::PlayClickSound()
-{
-	m_Click_Sound.play();
-}
-
-void Sound::PlayGameOverSound()
-{
-	m_GameOver_Sound.play();
-}
-
-void Sound::PlayLandedSound()
-{
-	m_Landed_Sound.play();
-}
-
-void Sound::PlayGameStartSound()
-{
-	m_GameStart_Sound.play();
-}
-
-void Sound::PlayBreakSound()
-{
-	m_Break_Sound.play();
+	auto it = m_SoundMap.find(name);
+	if (it == m_SoundMap.end())
+	{	// not found
+		m_Click_Sound.play();
+	}
+	else it->second.play();
 }

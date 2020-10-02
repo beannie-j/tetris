@@ -158,7 +158,7 @@ void GameLayer::CheckAndFillQueue(std::deque<int>& deque)
 		{
 			int random = rand() % 7;
 			deque.push_back(random);
-			std::cout << random << " ,";
+			//std::cout << random << " ,";
 		}
 	}
 }
@@ -172,10 +172,9 @@ Tetromino GameLayer::CreateTetromino(std::deque<int>& deque)
 
 	for (size_t i = 0; i < deque.size(); i++)
 	{
-		std::cout << deque[i] << " ,";
+		//std::cout << deque[i] << " ,";
 	}
-	std::cout << "\n";
-
+	//std::cout << "\n";
 	CheckAndFillQueue(deque);
 
 	return tetromino;
@@ -218,7 +217,7 @@ void GameLayer::ClearRow(sf::RenderWindow& window)
 			if (count == GameBoard::Width)
 			{
 				auto& app = Application::GetApplication();
-				app.GetSound().PlayBreakSound();
+				app.GetSound().Play("break");
 				for (int x = 0; x < GameBoard::Width; x++) {
 					int i = y;
 					int j = 0;
@@ -237,7 +236,7 @@ void GameLayer::ClearRow(sf::RenderWindow& window)
 void GameLayer::OnInit()
 {
 	auto& app = Application::GetApplication();
-	app.GetSound().PlayGameStartSound();
+	app.GetSound().Play("start");
 	memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
 	CheckAndFillQueue(m_Tetromino_queue);
@@ -280,6 +279,8 @@ void GameLayer::SpawnNextBlock()
 	m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
 }
 
+float delay = 0.0f;
+
 void GameLayer::OnUpdate()
 {
 	auto& app = Application::GetApplication();
@@ -313,7 +314,7 @@ void GameLayer::OnUpdate()
 			{
 				++points;
 				CommitBlock(m_CurrentTetromino);
-				app.GetSound().PlayLandedSound();
+				app.GetSound().Play("landed");
 				SpawnNextBlock();
 			}
 		}
@@ -326,7 +327,7 @@ void GameLayer::OnUpdate()
 		{
 			++points;
 			CommitBlock(m_CurrentTetromino);
-			app.GetSound().PlayLandedSound();
+			app.GetSound().Play("landed");
 			// need to delay spawning next block.
 			SpawnNextBlock();
 		}
@@ -352,7 +353,7 @@ void GameLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "[INFO] Back Button pressed" << std::endl;
-		app.GetSound().PlaySelectSound();
+		app.GetSound().Play("select");
 		s_GameOver = false;
 		app.SetLayer(new MainMenuLayer());
 	}
@@ -361,7 +362,7 @@ void GameLayer::OnUpdate()
 	{
 		if (!m_db_updated)
 		{
-			app.GetSound().PlayGameOverSound();
+			app.GetSound().Play("game over");
 			app.GetDatabase().InsertToScoreTable(s_Username, points);
 			app.GetDatabase().GetScoreList();
 			m_db_updated = true;

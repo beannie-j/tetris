@@ -35,7 +35,7 @@ void TimerLayer::OnEvent(sf::Event& event)
 void TimerLayer::OnInit()
 {
 	auto& app = Application::GetApplication();
-	app.GetSound().PlaySelectSound();
+	app.GetSound().Play("select");
 	m_game_start_text.setFont(*s_Arcade_Font);
 	m_game_start_text.setFillColor(sf::Color(107, 133, 255));
 	m_game_start_text.setCharacterSize(50);

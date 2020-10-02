@@ -106,7 +106,7 @@ void ScoreBoardLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "Back Button pressed" << std::endl;
-		app.GetSound().PlaySelectSound();
+		app.GetSound().Play("select");
 		app.SetLayer(new MainMenuLayer());
 	}
 }
@@ -116,7 +116,7 @@ void ScoreBoardLayer::OnEvent(sf::Event& event)
 	if (event.key.code == sf::Keyboard::Escape)
 	{
 		auto& app = Application::GetApplication();
-		app.GetSound().PlaySelectSound();
+		app.GetSound().Play("select");
 		app.SetLayer(new MainMenuLayer());
 	}
 }

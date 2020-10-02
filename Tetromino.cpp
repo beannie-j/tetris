@@ -295,7 +295,7 @@ bool Tetromino::YBoundsCollision()
             // checks for y bounds
             if ((y + posY) * block_size == ((GameBoard::Height - 1) * block_size))
             {
-                std::cout << "Y bounds collision " << (y + posY) * block_size  << "," << ((GameBoard::Height - 1) * block_size)  << std::endl;
+                //std::cout << "Y bounds collision " << (y + posY) * block_size  << "," << ((GameBoard::Height - 1) * block_size)  << std::endl;
                 return true;
             }
         }

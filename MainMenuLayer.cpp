@@ -44,18 +44,18 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 		if (event.key.code == sf::Keyboard::Up)
 		{
 			m_Menu->MoveUp();
-			sound.PlayClickSound();
+			sound.Play("click");
 		}
 
 		if (event.key.code == sf::Keyboard::Down)
 		{
 			m_Menu->MoveDown();
-			sound.PlayClickSound();
+			sound.Play("click");
 		}
 
 		if (event.key.code == sf::Keyboard::Enter)
 		{
-			sound.PlaySelectSound();
+			sound.Play("select");
 			std::cout << "[Key] Enter\n";
 			switch (m_Menu->GetPressedItem())
 			{
@@ -63,12 +63,12 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 				break;
 			case 0:
 				std::cout << "[Key] Play Button pressed\n";
-				sound.PlaySelectSound();
+				sound.Play("select");
 				app.SetLayer(new PreGameLayer());
 				break;
 			case 1:
 				std::cout << "[Key] Scores Button pressed\n";
-				sound.PlaySelectSound();
+				sound.Play("select");
 				app.SetLayer(new ScoreBoardLayer());
 				break;
 			case 2:

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Audio.hpp>
+#include <map>
 
 class Sound
 {
@@ -22,12 +23,9 @@ public:
 	sf::SoundBuffer m_Break_SoundBuffer;
 	sf::Sound m_Break_Sound;
 
+	std::map<std::string, sf::Sound> m_SoundMap;
+
 	void Init();
-	void PlaySelectSound();
-	void PlayClickSound();
-	void PlayGameOverSound();
-	void PlayLandedSound();
-	void PlayGameStartSound();
-	void PlayBreakSound();
+	void Play(std::string name);
 };
 
