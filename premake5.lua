@@ -19,11 +19,12 @@ workspace "SFML-Tetris"
 
 		files
         {
-            "%{prj.location}/*.h",
-            "%{prj.location}/*.hpp",
-            "%{prj.location}/*.c",
-            "%{prj.location}/*.cpp",
-            "%{prj.location}/*.inl",
+            "%{prj.location}/Tetris/src/*.h",
+            "%{prj.location}/Tetris/src/*.cpp",
+            "%{prj.location}/Layers/src/*.cpp",
+            "%{prj.location}/Layers/src/*.h",
+            "%{prj.location}/util/src/*.cpp",
+            "%{prj.location}/util/src/*.h",
             "%{prj.location}/*.db",
             "%{prj.location}/Dependencies/include/sqlite3/sqlite3.c"
         }

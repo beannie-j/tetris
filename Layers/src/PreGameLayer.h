@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Layer.h"
-#include "TextBox.h"
-#include "Button.h"
+#include "../../util/src/TextBox.h"
+#include "../../util/src/Button.h"
 
 #include <memory>
 

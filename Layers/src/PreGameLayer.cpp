@@ -2,8 +2,10 @@
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
 
-#include "Game.h"
-#include "Application.h"
+#include "../../Tetris/src/Game.h"
+#include "../../Tetris/src/Application.h"
+#include "../../util/src/TextBox.h"
+#include "../../util/src/Button.h"
 
 void PreGameLayer::OnInit()
 {

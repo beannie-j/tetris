@@ -1,10 +1,10 @@
 #pragma once
 #include <string>
-#include "Layer.h"
+#include "../../Layers/src/Layer.h"
 #include "SFML/Graphics.hpp"
 #include <SFML/Audio.hpp>
-#include "Database.h"
-#include "Sound.h"
+#include "../../util/src/Database.h"
+#include "../../util/src/Sound.h"
 
 class Application
 {

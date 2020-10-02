@@ -27,7 +27,6 @@ void Sound::Init()
 	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("landed", m_Landed_Sound));
 	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("start", m_GameStart_Sound));
 	m_SoundMap.emplace(std::pair<std::string, sf::Sound>("break", m_Break_Sound));
-
 }
 
 void Sound::Play(std::string name)

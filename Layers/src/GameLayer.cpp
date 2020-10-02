@@ -1,9 +1,8 @@
 #include "GameLayer.h"
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
-#include "Application.h"
-
-#include "Game.h"
+#include "../../Tetris/src/Application.h"
+#include "../../Tetris/src/Game.h"
 
 void GameLayer::DrawUsername(sf::RenderWindow& window)
 {
