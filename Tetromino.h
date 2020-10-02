@@ -36,6 +36,9 @@ public:
     bool XBoundsCollision();
     bool YBoundsCollision();
     void Rotate_HardCoded(RotationState rotation_state);
+    bool TopBoundsCollision();
+    bool XLeftBoundsCollision();
+    bool XRightBoundsCollision();
     static constexpr float block_size = 40.f;
 
     Tetromino() = default;

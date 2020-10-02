@@ -65,12 +65,14 @@ TetrominoType GameLayer::GetTypeFromNumeration(int number)
 
 bool GameLayer::CheckGameOver(Tetromino curr)
 {
+	// still broken..
+	// check Tetromino fits
 	for (int y = 0; y < curr.m_size; y++)
 	{
 		for (int x = 0; x < curr.m_size; x++)
 		{
 			if (curr.m_arr[y][x] == 0) continue;
-			if (curr.CollisionWithBlocks(0, 0))
+			if (curr.CollisionWithBlocks(0, 0) && curr.TopBoundsCollision())
 			{
 				s_GameOver = true;
 			}
@@ -106,10 +108,10 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 {
 	sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
 	// this is for debugging purposes - don't delete
-	//sf::Text text;
-	//text.setFont(*s_Arcade_Font);
-	//text.setFillColor(sf::Color(255, 255, 255));
-	//text.setCharacterSize(14);
+	sf::Text text;
+	text.setFont(*s_Arcade_Font);
+	text.setFillColor(sf::Color(255, 255, 255));
+	text.setCharacterSize(14);
 
 	for (int y = 0; y < GameBoard::Height; y++)
 	{
@@ -135,11 +137,11 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 
 				window.draw(rect);
 
-				// this is for debugging purposes - don't delete
-				//text.setPosition(sf::Vector2f(cx, cy));
-				//std::string string = std::to_string(x) + ", " + std::to_string(y);
-				//text.setString(string);
-				//window.draw(text);
+				//this is for debugging purposes - don't delete
+				text.setPosition(sf::Vector2f(cx, cy));
+				std::string string = std::to_string(x) + ", " + std::to_string(y);
+				text.setString(string);
+				window.draw(text);
 			}
 		}
 	}
@@ -229,7 +231,6 @@ void GameLayer::ClearRow(sf::RenderWindow& window)
 	}
 }
 
-
 void GameLayer::OnInit()
 {
 	auto& app = Application::GetApplication();
@@ -268,7 +269,6 @@ void GameLayer::OnShutdown()
 
 void GameLayer::SpawnNextBlock()
 {
-	std::cout << "Spawning next block..." << std::endl;
 	TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
 	Tetromino tetromino(type);
 	m_NextTetromino = tetromino;
@@ -297,10 +297,13 @@ void GameLayer::OnUpdate()
 
 	if (now - m_LastTime >= 0.6f)
 	{
+		// if no collision
+		// if (!m_CurrentTetromino.CollisionWithBlocks(0, 1) && !m_CurrentTetromino.YBoundsCollision()) this throws error why? no clue.
 		if (!m_CurrentTetromino.CollisionWithBlocks(0, 1))
 		{
 			m_CurrentTetromino.posY += cell_size;
 		}
+		// if there is collision
 		else
 		{
 			if (!s_GameOver)
@@ -324,6 +327,18 @@ void GameLayer::OnUpdate()
 			app.GetSound().PlayLandedSound();
 			SpawnNextBlock();
 		}
+	}
+
+	if (m_CurrentTetromino.XLeftBoundsCollision())
+	{
+		m_CurrentTetromino.posX += cell_size;
+		std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
+	}
+
+	if (m_CurrentTetromino.XRightBoundsCollision())
+	{
+		m_CurrentTetromino.posX -= cell_size;
+		std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
 	}
 
 	m_BackButton->DrawButton(window);
@@ -360,7 +375,7 @@ void GameLayer::OnUpdate()
 		std::string string = "GAME OVER";
 		text.setString(string);
 		window.draw(text);
-		m_CurrentTetromino.m_color = sf::Color::Transparent;
+		//m_CurrentTetromino.m_color = sf::Color::Transparent;
 
 		PaintGameBoardRed(window);
 
@@ -393,7 +408,7 @@ void GameLayer::OnEvent(sf::Event& event)
 		{
 			m_CurrentTetromino.posX -= cell_size;
 
-			if (m_CurrentTetromino.XBoundsCollision())
+			if (m_CurrentTetromino.XLeftBoundsCollision())
 			{
 				m_CurrentTetromino.posX += cell_size;
 			}
@@ -408,7 +423,7 @@ void GameLayer::OnEvent(sf::Event& event)
 		{
 			m_CurrentTetromino.posX += cell_size;
 
-			if (m_CurrentTetromino.XBoundsCollision())
+			if (m_CurrentTetromino.XRightBoundsCollision())
 			{
 				m_CurrentTetromino.posX -= cell_size;
 			}
@@ -436,7 +451,22 @@ void GameLayer::OnEvent(sf::Event& event)
 
 		if (event.key.code == sf::Keyboard::Up)
 		{
+			// if rotation will go outside the game board - what needs to be done??
+
 			m_CurrentTetromino.Rotate_HardCoded(m_CurrentTetromino.m_rotation_state);
+
+			if (m_CurrentTetromino.XLeftBoundsCollision())
+			{
+				m_CurrentTetromino.posX += cell_size;
+				std::cout <<"x : " << m_CurrentTetromino.posX << std::endl;
+			}
+
+			if (m_CurrentTetromino.XRightBoundsCollision())
+			{
+				m_CurrentTetromino.posX -= cell_size;
+				std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
+
+			}
 		}
 
 		if (event.key.code == sf::Keyboard::Space)
