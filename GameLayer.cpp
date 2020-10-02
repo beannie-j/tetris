@@ -109,7 +109,10 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 	sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
 	// this is for debugging purposes - don't delete
 	sf::Text text;
-	text.setFont(*s_Arcade_Font);
+	sf::Font font;
+	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
+	text.setFont(font);
+
 	text.setFillColor(sf::Color(255, 255, 255));
 	text.setCharacterSize(14);
 
@@ -298,9 +301,9 @@ void GameLayer::OnUpdate()
 	if (now - m_LastTime >= 0.6f)
 	{
 		// if no collision
-		// if (!m_CurrentTetromino.CollisionWithBlocks(0, 1) && !m_CurrentTetromino.YBoundsCollision()) this throws error why? no clue.
 		if (!m_CurrentTetromino.CollisionWithBlocks(0, 1))
 		{
+			// inside this 0.6f block because cell size increases every 0.6 seconds.
 			m_CurrentTetromino.posY += cell_size;
 		}
 		// if there is collision
@@ -316,15 +319,15 @@ void GameLayer::OnUpdate()
 		}
 		m_LastTime = now;
 	}
-	// need to fix for the ybounds collision status
+
 	if (m_CurrentTetromino.YBoundsCollision())
 	{
-		// problem is here...
 		if (!s_GameOver)
 		{
 			++points;
 			CommitBlock(m_CurrentTetromino);
 			app.GetSound().PlayLandedSound();
+			// need to delay spawning next block.
 			SpawnNextBlock();
 		}
 	}
@@ -332,13 +335,11 @@ void GameLayer::OnUpdate()
 	if (m_CurrentTetromino.XLeftBoundsCollision())
 	{
 		m_CurrentTetromino.posX += cell_size;
-		std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
 	}
 
 	if (m_CurrentTetromino.XRightBoundsCollision())
 	{
 		m_CurrentTetromino.posX -= cell_size;
-		std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
 	}
 
 	m_BackButton->DrawButton(window);

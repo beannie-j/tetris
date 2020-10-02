@@ -293,9 +293,27 @@ bool Tetromino::YBoundsCollision()
         {
             if (m_arr[y][x] == 0) continue;
             // checks for y bounds
-            if ((y + posY) * block_size > ((GameBoard::Height - 2) * block_size))
+            if ((y + posY) * block_size == ((GameBoard::Height - 1) * block_size))
             {
-                std::cout << "Y bounds collision" << std::endl;
+                std::cout << "Y bounds collision " << (y + posY) * block_size  << "," << ((GameBoard::Height - 1) * block_size)  << std::endl;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Tetromino::Y1BoundsCollision()
+{
+    for (int y = 0; y < m_size; y++)
+    {
+        for (int x = 0; x < m_size; x++)
+        {
+            if (m_arr[y][x] == 0) continue;
+            // checks for y bounds
+            if ((y + posY) * block_size == ((GameBoard::Height - 2) * block_size))
+            {
+                //std::cout << "Y1 bounds collision " << (y + posY) * block_size  << "," << ((GameBoard::Height - 2) * block_size)  << std::endl;
                 return true;
             }
         }

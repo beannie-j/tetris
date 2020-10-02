@@ -35,6 +35,7 @@ public:
     bool CollisionWithBlocks(float dx, float dy);
     bool XBoundsCollision();
     bool YBoundsCollision();
+    bool Y1BoundsCollision();
     void Rotate_HardCoded(RotationState rotation_state);
     bool TopBoundsCollision();
     bool XLeftBoundsCollision();
