@@ -2,19 +2,19 @@
 #include "MainMenuLayer.h"
 #include "../../Tetris/src/Application.h"
 
-#include "../../Tetris/src/Game.h"
 
 void ScoreBoardLayer::OnInit()
 {
 	auto& app = Application::GetApplication();
+	sf::Font& font = app.GetFont();
 
-	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
 
 	int i = 2;
 	int spacing = 150;
 	int x = 350;
 
-	m_title.setFont(*s_Arcade_Font);
+	m_title.setFont(font);
 	m_title.setCharacterSize(50);
 	m_title.setFillColor(sf::Color::White);
 	m_title.setPosition(300.f, 80.f);
@@ -25,10 +25,10 @@ void ScoreBoardLayer::OnInit()
 	m_Gold_Sprite.setScale(0.2f, 0.2f);
 	m_Gold_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
 
-	m_score1.setFont(*s_Arcade_Font);
+	m_score1.setFont(font);
 	m_score1.setFillColor(sf::Color::White);
 	m_score1.setPosition((float)(x + 300), (float)(spacing * i));
-	m_entry1.setFont(*s_Arcade_Font);
+	m_entry1.setFont(font);
 	m_entry1.setFillColor(sf::Color::White);
 	m_entry1.setPosition((float)x, (float)(spacing * i++));
 
@@ -40,10 +40,10 @@ void ScoreBoardLayer::OnInit()
 	m_Silver_Sprite.setScale(0.2f, 0.2f);
 	m_Silver_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
 
-	m_score2.setFont(*s_Arcade_Font);
+	m_score2.setFont(font);
 	m_score2.setFillColor(sf::Color::White);
 	m_score2.setPosition((float)(x + 300), (float)(spacing * i));
-	m_entry2.setFont(*s_Arcade_Font);
+	m_entry2.setFont(font);
 	m_entry2.setFillColor(sf::Color::White);
 	m_entry2.setPosition((float)x, (float)(spacing * i++));
 
@@ -52,10 +52,10 @@ void ScoreBoardLayer::OnInit()
 	m_Bronze_Sprite.setScale(0.2f, 0.2f);
 	m_Bronze_Sprite.setPosition(x - 150.f, spacing * i - 20.f);
 
-	m_score3.setFont(*s_Arcade_Font);
+	m_score3.setFont(font);
 	m_score3.setFillColor(sf::Color::White);
 	m_score3.setPosition((float)(x + 300), (float)(spacing * i));
-	m_entry3.setFont(*s_Arcade_Font);
+	m_entry3.setFont(font);
 	m_entry3.setFillColor(sf::Color::White);
 	m_entry3.setPosition((float)x, (float)(spacing * i++));
 

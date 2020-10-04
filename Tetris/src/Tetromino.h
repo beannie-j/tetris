@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Game.h"
+#include <array>
 
 enum class RotationState : int {
     cw0 = 0, cw90 = 1, cw180 = 2, cw270 = 3
@@ -43,6 +43,7 @@ public:
     bool XLeftBoundsCollision();
     bool XRightBoundsCollision();
     static constexpr float block_size = 40.f;
+    static sf::Color s_Colors[10];
 
     Tetromino() = default;
 

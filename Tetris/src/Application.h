@@ -28,17 +28,16 @@ public:
 	Sound* s_Sound = nullptr;
 	sf::Font* s_Arcade_Font = nullptr;
 
-
 	static const float block_size;
 	static int Window_Width;
 	static int Window_Height;
 
 	int s_Score = 0;
-	bool s_GameOver = false;
-	std::string s_Username;
-	int s_shift = 7;
+	static std::string s_Username;
+	static int s_shift;
 
 	static Application& GetApplication();
+
 	void Run();
 	void Init();
 	void Shutdown();

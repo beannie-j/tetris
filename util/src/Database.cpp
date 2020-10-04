@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <iostream>
 #include <string>
-#include "../../Tetris/src/Game.h"
 #include <vector>
 
 void Database::CreateScoreTable()

@@ -2,7 +2,9 @@
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
 #include "../../Tetris/src/Application.h"
-#include "../../Tetris/src/Game.h"
+
+bool GameLayer::s_GameOver = false;
+
 
 void GameLayer::DrawUsername(sf::RenderWindow& window)
 {
@@ -13,7 +15,7 @@ void GameLayer::DrawUsername(sf::RenderWindow& window)
 	text.setFillColor(sf::Color::White);
 	text.setCharacterSize(30);
 	text.setPosition(700, 70);
-	std::string string = "PLAYER : " + s_Username;
+	std::string string = "PLAYER : " + Application::s_Username;
 	text.setString(string);
 	window.draw(text);
 }
@@ -92,8 +94,8 @@ void GameLayer::PaintGameBoardRed(sf::RenderWindow& window)
 	{
 		for (int x = 0; x < GameBoard::Width; x++)
 		{
-			float cx = (x + s_shift) * Tetromino::block_size;
-			float cy = (y + s_shift) * Tetromino::block_size;
+			float cx = (x + Application::s_shift) * Tetromino::block_size;
+			float cy = (y + Application::s_shift) * Tetromino::block_size;
 			int block = GameBoard::PlayingArea[x + y * GameBoard::Width];
 			if (block < 2)
 			{
@@ -125,14 +127,14 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 	{
 		for (int x = 0; x < GameBoard::Width; x++)
 		{
-			float cx = (x + s_shift) * Tetromino::block_size;
-			float cy = (y + s_shift) * Tetromino::block_size;
+			float cx = (x + Application::s_shift) * Tetromino::block_size;
+			float cy = (y + Application::s_shift) * Tetromino::block_size;
 			int block = GameBoard::PlayingArea[x + y * GameBoard::Width];
 			if (block >= 2)
 			{
 				rect.setPosition(sf::Vector2f(cx, cy));
 				//rect.setOutlineThickness(3);
-				rect.setFillColor(s_Colors[block]);
+				rect.setFillColor(Tetromino::s_Colors[block]);
 				rect.setOutlineColor(sf::Color(250, 150, 100));
 				window.draw(rect);
 			}
@@ -375,7 +377,7 @@ void GameLayer::OnUpdate()
 		if (!m_db_updated)
 		{
 			app.GetSound().Play("game over");
-			app.GetDatabase().InsertToScoreTable(s_Username, points);
+			app.GetDatabase().InsertToScoreTable(Application::s_Username, points);
 			app.GetDatabase().GetScoreList();
 			m_db_updated = true;
 		}

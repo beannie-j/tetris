@@ -2,7 +2,6 @@
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
 
-#include "../../Tetris/src/Game.h"
 #include "../../Tetris/src/Application.h"
 #include "../../util/src/TextBox.h"
 #include "../../util/src/Button.h"
@@ -64,7 +63,7 @@ void PreGameLayer::OnEvent(sf::Event& event)
 	if (event.key.code == sf::Keyboard::Enter)
 	{
 		std::cout << "[Key] Enter, Username : " << m_TextBox->getString() << std::endl;
-		s_Username = m_TextBox->getString();
+		Application::s_Username = m_TextBox->getString();
 		m_PlayButton->FillColor();
 		auto& app = Application::GetApplication();
 		app.SetLayer(new TimerLayer());

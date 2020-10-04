@@ -1,13 +1,15 @@
 #include "Application.h"
 #include "../../Layers/src/MainMenuLayer.h"
 #include "SFML/Graphics.hpp"
-#include "Game.h"
+#include <string>
 
 static Application* s_Instance = nullptr;
 
 const float Application::block_size = 40.f;
 int Application::Window_Width = 30 * (int)block_size; 
 int Application::Window_Height = 30 * (int)block_size;
+int Application::s_shift = 7;
+std::string Application::s_Username = "";
 
 Application::Application(const std::string& name)
 {

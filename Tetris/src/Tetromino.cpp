@@ -4,6 +4,20 @@
 #include <cstdlib>
 #include <typeinfo>
 
+sf::Color Tetromino::s_Colors[10] =
+{
+    sf::Color::Black,
+    sf::Color::Black,
+    sf::Color(59, 237, 237), // cyan
+    sf::Color(237, 234, 59), // yellow
+    sf::Color(138, 43, 226), // purple
+    sf::Color(53, 232, 68), // green
+    sf::Color(232, 70, 49), // red
+    sf::Color(54, 86, 227), // blue
+    sf::Color(138, 43, 226), // purple
+    sf::Color(255, 165, 0) // orange-yellow
+};
+
 Tetromino::Tetromino(TetrominoType type)
     : m_type(type)
 {
@@ -433,8 +447,8 @@ void Tetromino::Draw(sf::RenderWindow& window)
         {
             if (m_arr[y][x])
             {
-                float cx = (posX + x + s_shift) * block_size;
-                float cy = (posY + y + s_shift) * block_size;
+                float cx = (posX + x + Application::s_shift) * block_size;
+                float cy = (posY + y + Application::s_shift) * block_size;
 
                 rect.setPosition(sf::Vector2f(cx, cy));
                 rect.setOutlineColor(sf::Color::White);
