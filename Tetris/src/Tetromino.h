@@ -27,7 +27,9 @@ public:
     float posX = 3.0f;
     float posY = 0.f;
     sf::Color m_color;
-    //bool m_landed = false;
+
+    // make it const
+    float cell_size = 1.0f;
 
     Tetromino(TetrominoType type);
     void Draw(sf::RenderWindow& window);

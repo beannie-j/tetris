@@ -8,7 +8,9 @@
 void MainMenuLayer::OnInit()
 {
 	// load resources
-	m_Menu = std::make_unique<Menu>((float)Window_Width, (float)Window_Height - 200.f, *s_Arcade_Font);
+	auto& app = Application::GetApplication();
+	sf::Font& font = app.GetFont();
+	m_Menu = std::make_unique<Menu>((float)Application::Window_Width, (float)Application::Window_Height - 200.f, font);
 }
 
 void MainMenuLayer::OnShutdown()
@@ -20,11 +22,12 @@ void MainMenuLayer::OnUpdate()
 {
 	auto& app = Application::GetApplication();
 	sf::RenderWindow& window = app.GetWindow();
+	sf::Font& font = app.GetFont();
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
 	sf::Text arcade_game_title_text;
-	arcade_game_title_text.setFont(*s_Arcade_Font);
+	arcade_game_title_text.setFont(font);
 	arcade_game_title_text.setFillColor(sf::Color(255, 165, 0));
 	arcade_game_title_text.setCharacterSize(70);
 	arcade_game_title_text.setPosition(160, 50);
