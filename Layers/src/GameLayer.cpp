@@ -107,6 +107,7 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 {
 	sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
 	// this is for debugging purposes - don't delete
+	/*
 	sf::Text text;
 	sf::Font font;
 	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
@@ -114,6 +115,7 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 
 	text.setFillColor(sf::Color(255, 255, 255));
 	text.setCharacterSize(14);
+	*/
 
 	for (int y = 0; y < GameBoard::Height; y++)
 	{
@@ -140,10 +142,12 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 				window.draw(rect);
 
 				//this is for debugging purposes - don't delete
+				/*
 				text.setPosition(sf::Vector2f(cx, cy));
 				std::string string = std::to_string(x) + ", " + std::to_string(y);
 				text.setString(string);
 				window.draw(text);
+				*/
 			}
 		}
 	}
@@ -270,12 +274,15 @@ void GameLayer::OnShutdown()
 
 void GameLayer::SpawnNextBlock()
 {
-	TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
-	Tetromino tetromino(type);
-	m_NextTetromino = tetromino;
-	m_NextTetromino.posX = 14.0;
-	m_NextTetromino.posY = 4.0;
-	m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+	if (!s_GameOver)
+	{
+		TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
+		Tetromino tetromino(type);
+		m_NextTetromino = tetromino;
+		m_NextTetromino.posX = 14.0;
+		m_NextTetromino.posY = 4.0;
+		m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+	}
 }
 
 float delay = 0.0f;
@@ -376,8 +383,8 @@ void GameLayer::OnUpdate()
 		std::string string = "GAME OVER";
 		text.setString(string);
 		window.draw(text);
-		//m_CurrentTetromino.m_color = sf::Color::Transparent;
 
+		m_CurrentTetromino.m_color = sf::Color::Transparent;
 		PaintGameBoardRed(window);
 
 		// draw score
