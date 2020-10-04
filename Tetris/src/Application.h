@@ -7,7 +7,6 @@
 #include "../../util/src/Database.h"
 #include "../../util/src/Sound.h"
 
-
 struct GameBoard
 {
 	inline static constexpr int Width = 10;
@@ -38,6 +37,8 @@ public:
 
 	static Application& GetApplication();
 
+	sf::Clock clock;
+
 	void Run();
 	void Init();
 	void Shutdown();
@@ -51,6 +52,6 @@ public:
 	sf::Font& GetFont() { return *s_Arcade_Font; }
 
 private:
-
+	float m_LastFrameTime = 0.0f;
 };
 

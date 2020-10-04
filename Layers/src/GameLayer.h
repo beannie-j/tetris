@@ -42,4 +42,8 @@ private:
 	void ClearRow(sf::RenderWindow& window);
 
 	static bool s_GameOver;
+
+	float m_LastFrameTime = 0.0f;
+
+	float m_Delay = 0.0f;
 };

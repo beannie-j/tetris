@@ -2,6 +2,7 @@
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
 #include "../../Tetris/src/Application.h"
+#include "../../util/src/Timestep.h"
 
 bool GameLayer::s_GameOver = false;
 
@@ -335,6 +336,14 @@ void GameLayer::OnUpdate()
 		m_LastTime = now;
 	}
 
+	float time = (float)clock.getElapsedTime().asSeconds();
+	Timestep ts = time - m_LastFrameTime;// delta time
+	m_LastFrameTime = time;
+
+	m_Delay += ts.GetSeconds();
+
+	//std::cout << "Delat time: {0}s ({1}ms) " << ts.GetSeconds() << std::endl;
+
 	if (m_CurrentTetromino.YBoundsCollision())
 	{
 		if (!s_GameOver)
@@ -343,7 +352,7 @@ void GameLayer::OnUpdate()
 			CommitBlock(m_CurrentTetromino);
 			app.GetSound().Play("landed");
 			// need to delay spawning next block.
-			SpawnNextBlock();
+			SpawnNextBlock();		
 		}
 	}
 
