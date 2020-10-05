@@ -1,7 +1,22 @@
 #include "Tetromino.h"
+#include "Application.h"
 #include <iostream>
 #include <cstdlib>
 #include <typeinfo>
+
+sf::Color Tetromino::s_Colors[10] =
+{
+    sf::Color::Black,
+    sf::Color::Black,
+    sf::Color(59, 237, 237), // cyan
+    sf::Color(237, 234, 59), // yellow
+    sf::Color(138, 43, 226), // purple
+    sf::Color(53, 232, 68), // green
+    sf::Color(232, 70, 49), // red
+    sf::Color(54, 86, 227), // blue
+    sf::Color(138, 43, 226), // purple
+    sf::Color(255, 165, 0) // orange-yellow
+};
 
 Tetromino::Tetromino(TetrominoType type)
     : m_type(type)
@@ -283,16 +298,6 @@ bool Tetromino::MoveDown(float dy)
 
     posY += dy;
     return true;
-
-    /*
-    if (!YBoundsCollision() && !CollisionWithBlocks())
-    {
-        std::cout << "moving down" << std::endl;
-        posY += dy;
-        return true;
-    }
-    std::cout << "move down stop" << std::endl;*/
-    //return false;
 }
 
 bool Tetromino::YBoundsCollision()
@@ -303,9 +308,9 @@ bool Tetromino::YBoundsCollision()
         {
             if (m_arr[y][x] == 0) continue;
             // checks for y bounds
-            if ((y + posY) * block_size > ((GameBoard::Height - 2) * block_size))
+            if ((y + posY) * block_size == ((GameBoard::Height - 1) * block_size))
             {
-                std::cout << "Y bounds collision" << std::endl;
+                //std::cout << "Y bounds collision " << (y + posY) * block_size  << "," << ((GameBoard::Height - 1) * block_size)  << std::endl;
                 return true;
             }
         }
@@ -313,6 +318,77 @@ bool Tetromino::YBoundsCollision()
     return false;
 }
 
+bool Tetromino::Y1BoundsCollision()
+{
+    for (int y = 0; y < m_size; y++)
+    {
+        for (int x = 0; x < m_size; x++)
+        {
+            if (m_arr[y][x] == 0) continue;
+            // checks for y bounds
+            if ((y + posY) * block_size == ((GameBoard::Height - 2) * block_size))
+            {
+                //std::cout << "Y1 bounds collision " << (y + posY) * block_size  << "," << ((GameBoard::Height - 2) * block_size)  << std::endl;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Tetromino::TopBoundsCollision()
+{
+    for (int y = 0; y < m_size; y++)
+    {
+        for (int x = 0; x < m_size; x++)
+        {
+            if (m_arr[y][x] == 0) continue;
+            // checks for top y bounds == 0
+            if ((y + posY) * block_size < 1)
+            {
+                std::cout << "Y 0 top bounds collision " << (y + posY) * block_size << std::endl;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Tetromino::XLeftBoundsCollision()
+{
+    for (int y = 0; y < m_size; y++)
+    {
+        for (int x = 0; x < m_size; x++)
+        {
+            if (m_arr[y][x] == 0) continue;
+
+            if ((posX + x) * block_size < 0 )
+            {
+                std::cout << "X Left bounds collision" << std::endl;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Tetromino::XRightBoundsCollision()
+{
+    for (int y = 0; y < m_size; y++)
+    {
+        for (int x = 0; x < m_size; x++)
+        {
+            if (m_arr[y][x] == 0) continue;
+
+            if ((posX + x) * block_size >= ((GameBoard::Width) * block_size) - cell_size)
+            {
+                std::cout << "X Right bounds collision" << std::endl;
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 bool Tetromino::XBoundsCollision()
 {
@@ -322,8 +398,11 @@ bool Tetromino::XBoundsCollision()
         {
             if (m_arr[y][x] == 0) continue;
 
-            // checks for x bounds
-            if ((posX + x) * block_size < 0 || (posX + x) * block_size >= ((GameBoard::Width) * block_size) - cell_size) return true;
+            if ((posX + x) * block_size < 0 || (posX + x) * block_size >= ((GameBoard::Width) * block_size) - cell_size)
+            {
+                std::cout << "X bounds collision" << std::endl;
+                return true;
+            }
         }
     }
     return false;
@@ -331,47 +410,25 @@ bool Tetromino::XBoundsCollision()
 
 bool Tetromino::CollisionWithBlocks(float dx, float dy)
 {
-    /*for (int yc = 0; yc < m_size; yc++)
+    float x = posX + dx;
+    float y = posY + dy;
+    for (int yc = 0; yc < 4; yc++)
     {
-        for (int xc = 0; xx < m_size; x++)
+        for (int xc = 0; xc < 4; xc++)
         {
-            if (m_arr[yc][xc] == 0) continue;
-
-            /*int potentialPosition = (x + posX) + (y + posY) * GameBoard::Width;
-            if (GameBoard::PlayingArea[potentialPosition])
+            if (m_arr[yc][xc] != 0)
             {
-                std::cout << "collision with other block" << std::endl;
-                return true;
-            }
-        }
-    }
-    return false;*/
-
-    {
-        float x = posX + dx;
-        float y = posY + dy;
-
-        for (int yc = 0; yc < 4; yc++)
-        {
-            for (int xc = 0; xc < 4; xc++)
-            {
-                if (m_arr[yc][xc] != 0)
+                float actualXPosition = xc + x;
+                float actualYPosition = yc + y;
+                if (GameBoard::PlayingArea[actualXPosition + actualYPosition * GameBoard::Width])
                 {
-                    float actualXPosition = xc + x;
-                    float actualYPosition = yc + y;
-                    if (GameBoard::PlayingArea[actualXPosition + actualYPosition * GameBoard::Width])
-                    {
-                        std::cout << "collision with other" << std::endl;
-                        // how to slow down the collision
-
-                        return true;
-                    }
+                    std::cout << "collision with other" << std::endl;
+                    return true;
                 }
             }
         }
-
-        return false;
     }
+    return false;
 }
 
 void Tetromino::Draw(sf::RenderWindow& window)
@@ -390,8 +447,8 @@ void Tetromino::Draw(sf::RenderWindow& window)
         {
             if (m_arr[y][x])
             {
-                float cx = (posX + x + s_shift) * block_size;
-                float cy = (posY + y + s_shift) * block_size;
+                float cx = (posX + x + Application::s_shift) * block_size;
+                float cy = (posY + y + Application::s_shift) * block_size;
 
                 rect.setPosition(sf::Vector2f(cx, cy));
                 rect.setOutlineColor(sf::Color::White);

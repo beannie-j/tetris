@@ -2,14 +2,17 @@
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
 
-#include "Game.h"
-#include "Application.h"
+#include "../../Tetris/src/Application.h"
+#include "../../util/src/TextBox.h"
+#include "../../util/src/Button.h"
 
 void PreGameLayer::OnInit()
 {
-	m_TextBox = std::make_unique<TextBox>(*s_Arcade_Font, (float)(Window_Width / 4), 150.f, 500.f, 65.f);
-	m_PlayButton = std::make_unique<Button>((float)(Window_Width / 4 + 150), 300.f, 200.f, 50.f, *s_Arcade_Font, "START", 30, sf::Color::Blue, sf::Color::Green);
-	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+	auto& app = Application::GetApplication();
+	sf::Font& font = app.GetFont();
+	m_TextBox = std::make_unique<TextBox>(font, (float)(Application::Window_Width / 4), 150.f, 500.f, 65.f);
+	m_PlayButton = std::make_unique<Button>((float)(Application::Window_Width / 4 + 150), 300.f, 200.f, 50.f, font, "START", 30, sf::Color::Blue, sf::Color::Green);
+	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
 }
 
 void PreGameLayer::OnShutdown()
@@ -21,18 +24,19 @@ void PreGameLayer::OnUpdate()
 {
 	auto& app = Application::GetApplication();
 	sf::RenderWindow& window = app.GetWindow();
+	sf::Font& font = app.GetFont();
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 	// Draw some graphical entities
 	sf::Text askNameText;
-	askNameText.setFont(*s_Arcade_Font);
+	askNameText.setFont(font);
 	askNameText.setFillColor(sf::Color::White);
 	askNameText.setCharacterSize(30);
-	askNameText.setPosition(Window_Width / 4, 100);
+	askNameText.setPosition(Application::Window_Width / 4, 100);
 	std::string string = "ENTER YOUR NAME :";
 	askNameText.setString(string);
 	window.draw(askNameText);
 
-	m_TextBox->setDimensions(Window_Width / 4, 150.f, 500.f, 65.f);
+	m_TextBox->setDimensions(Application::Window_Width / 4, 150.f, 500.f, 65.f);
 
 	m_PlayButton->DrawButton(window);
 	//playButton.GetPressed(mouse_position);
@@ -44,7 +48,7 @@ void PreGameLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "[INFO] Back Button pressed" << std::endl;
-		app.GetSound().PlaySelectSound();
+		app.GetSound().Play("select");
 		app.SetLayer(new MainMenuLayer());
 	}
 }
@@ -59,7 +63,7 @@ void PreGameLayer::OnEvent(sf::Event& event)
 	if (event.key.code == sf::Keyboard::Enter)
 	{
 		std::cout << "[Key] Enter, Username : " << m_TextBox->getString() << std::endl;
-		s_Username = m_TextBox->getString();
+		Application::s_Username = m_TextBox->getString();
 		m_PlayButton->FillColor();
 		auto& app = Application::GetApplication();
 		app.SetLayer(new TimerLayer());

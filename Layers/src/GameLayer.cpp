@@ -1,26 +1,32 @@
 #include "GameLayer.h"
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
-#include "Application.h"
+#include "../../Tetris/src/Application.h"
+#include "../../util/src/Timestep.h"
 
-#include "Game.h"
+bool GameLayer::s_GameOver = false;
+
 
 void GameLayer::DrawUsername(sf::RenderWindow& window)
 {
+	auto& app = Application::GetApplication();
+	sf::Font& font = app.GetFont();
 	sf::Text text;
-	text.setFont(*s_Arcade_Font);
+	text.setFont(font);
 	text.setFillColor(sf::Color::White);
 	text.setCharacterSize(30);
 	text.setPosition(700, 70);
-	std::string string = "PLAYER : " + s_Username;
+	std::string string = "PLAYER : " + Application::s_Username;
 	text.setString(string);
 	window.draw(text);
 }
 
 void GameLayer::DrawPoints(sf::RenderWindow& window, int points)
 {
+	auto& app = Application::GetApplication();
+	sf::Font& font = app.GetFont();
 	sf::Text text;
-	text.setFont(*s_Arcade_Font);
+	text.setFont(font);
 	text.setFillColor(sf::Color::White);
 	text.setCharacterSize(30);
 	text.setPosition(700, 120);
@@ -65,12 +71,14 @@ TetrominoType GameLayer::GetTypeFromNumeration(int number)
 
 bool GameLayer::CheckGameOver(Tetromino curr)
 {
+	// still broken..
+	// check Tetromino fits
 	for (int y = 0; y < curr.m_size; y++)
 	{
 		for (int x = 0; x < curr.m_size; x++)
 		{
 			if (curr.m_arr[y][x] == 0) continue;
-			if (curr.CollisionWithBlocks(0, 0))
+			if (curr.CollisionWithBlocks(0, 0) && curr.TopBoundsCollision())
 			{
 				s_GameOver = true;
 			}
@@ -87,8 +95,8 @@ void GameLayer::PaintGameBoardRed(sf::RenderWindow& window)
 	{
 		for (int x = 0; x < GameBoard::Width; x++)
 		{
-			float cx = (x + s_shift) * Tetromino::block_size;
-			float cy = (y + s_shift) * Tetromino::block_size;
+			float cx = (x + Application::s_shift) * Tetromino::block_size;
+			float cy = (y + Application::s_shift) * Tetromino::block_size;
 			int block = GameBoard::PlayingArea[x + y * GameBoard::Width];
 			if (block < 2)
 			{
@@ -106,23 +114,28 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 {
 	sf::RectangleShape rect(sf::Vector2f(Tetromino::block_size, Tetromino::block_size));
 	// this is for debugging purposes - don't delete
-	//sf::Text text;
-	//text.setFont(*s_Arcade_Font);
-	//text.setFillColor(sf::Color(255, 255, 255));
-	//text.setCharacterSize(14);
+	/*
+	sf::Text text;
+	sf::Font font;
+	font.loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
+	text.setFont(font);
+
+	text.setFillColor(sf::Color(255, 255, 255));
+	text.setCharacterSize(14);
+	*/
 
 	for (int y = 0; y < GameBoard::Height; y++)
 	{
 		for (int x = 0; x < GameBoard::Width; x++)
 		{
-			float cx = (x + s_shift) * Tetromino::block_size;
-			float cy = (y + s_shift) * Tetromino::block_size;
+			float cx = (x + Application::s_shift) * Tetromino::block_size;
+			float cy = (y + Application::s_shift) * Tetromino::block_size;
 			int block = GameBoard::PlayingArea[x + y * GameBoard::Width];
 			if (block >= 2)
 			{
 				rect.setPosition(sf::Vector2f(cx, cy));
 				//rect.setOutlineThickness(3);
-				rect.setFillColor(s_Colors[block]);
+				rect.setFillColor(Tetromino::s_Colors[block]);
 				rect.setOutlineColor(sf::Color(250, 150, 100));
 				window.draw(rect);
 			}
@@ -135,11 +148,13 @@ void GameLayer::DrawGameBoard(sf::RenderWindow& window)
 
 				window.draw(rect);
 
-				// this is for debugging purposes - don't delete
-				//text.setPosition(sf::Vector2f(cx, cy));
-				//std::string string = std::to_string(x) + ", " + std::to_string(y);
-				//text.setString(string);
-				//window.draw(text);
+				//this is for debugging purposes - don't delete
+				/*
+				text.setPosition(sf::Vector2f(cx, cy));
+				std::string string = std::to_string(x) + ", " + std::to_string(y);
+				text.setString(string);
+				window.draw(text);
+				*/
 			}
 		}
 	}
@@ -153,7 +168,7 @@ void GameLayer::CheckAndFillQueue(std::deque<int>& deque)
 		{
 			int random = rand() % 7;
 			deque.push_back(random);
-			std::cout << random << " ,";
+			//std::cout << random << " ,";
 		}
 	}
 }
@@ -167,10 +182,9 @@ Tetromino GameLayer::CreateTetromino(std::deque<int>& deque)
 
 	for (size_t i = 0; i < deque.size(); i++)
 	{
-		std::cout << deque[i] << " ,";
+		//std::cout << deque[i] << " ,";
 	}
-	std::cout << "\n";
-
+	//std::cout << "\n";
 	CheckAndFillQueue(deque);
 
 	return tetromino;
@@ -213,7 +227,7 @@ void GameLayer::ClearRow(sf::RenderWindow& window)
 			if (count == GameBoard::Width)
 			{
 				auto& app = Application::GetApplication();
-				app.GetSound().PlayBreakSound();
+				app.GetSound().Play("break");
 				for (int x = 0; x < GameBoard::Width; x++) {
 					int i = y;
 					int j = 0;
@@ -229,11 +243,11 @@ void GameLayer::ClearRow(sf::RenderWindow& window)
 	}
 }
 
-
 void GameLayer::OnInit()
 {
 	auto& app = Application::GetApplication();
-	app.GetSound().PlayGameStartSound();
+	app.GetSound().Play("start");
+	sf::Font& font = app.GetFont();
 	memset(GameBoard::PlayingArea.data(), 0, sizeof(GameBoard::PlayingArea));
 
 	CheckAndFillQueue(m_Tetromino_queue);
@@ -245,12 +259,12 @@ void GameLayer::OnInit()
 	m_NextTetromino.posX = 14.0;
 	m_NextTetromino.posY = 4.0;
 
-	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, *s_Arcade_Font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
-	m_PlayAgainButton = std::make_unique<Button>(750.f, 700.f, 350.f, 50.f, *s_Arcade_Font, "PLAY AGAIN", 30, sf::Color::Blue, sf::Color::Green);
+	m_BackButton = std::make_unique<Button>(30.f, 30.f, 200.f, 50.f, font, "BACK", 30, sf::Color::Blue, sf::Color::Green);
+	m_PlayAgainButton = std::make_unique<Button>(750.f, 700.f, 350.f, 50.f, font, "PLAY AGAIN", 30, sf::Color::Blue, sf::Color::Green);
 
 	m_LastTime = clock.getElapsedTime().asSeconds();
 
-	m_NextTetrominoText.setFont(*s_Arcade_Font);
+	m_NextTetrominoText.setFont(font);
 	m_NextTetrominoText.setFillColor(sf::Color::White);
 	m_NextTetrominoText.setCharacterSize(30);
 	m_NextTetrominoText.setPosition(830, 350);
@@ -268,19 +282,24 @@ void GameLayer::OnShutdown()
 
 void GameLayer::SpawnNextBlock()
 {
-	std::cout << "Spawning next block..." << std::endl;
-	TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
-	Tetromino tetromino(type);
-	m_NextTetromino = tetromino;
-	m_NextTetromino.posX = 14.0;
-	m_NextTetromino.posY = 4.0;
-	m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+	if (!s_GameOver)
+	{
+		TetrominoType type = GetTypeFromNumeration(m_Tetromino_queue[1]);
+		Tetromino tetromino(type);
+		m_NextTetromino = tetromino;
+		m_NextTetromino.posX = 14.0;
+		m_NextTetromino.posY = 4.0;
+		m_CurrentTetromino = CreateTetromino(m_Tetromino_queue);
+	}
 }
+
+float delay = 0.0f;
 
 void GameLayer::OnUpdate()
 {
 	auto& app = Application::GetApplication();
 	sf::RenderWindow& window = app.GetWindow();
+	sf::Font& font = app.GetFont();
 	DrawGameBoard(window);
 	m_CurrentTetromino.Draw(window);
 	ClearRow(window);
@@ -297,33 +316,54 @@ void GameLayer::OnUpdate()
 
 	if (now - m_LastTime >= 0.6f)
 	{
+		// if no collision
 		if (!m_CurrentTetromino.CollisionWithBlocks(0, 1))
 		{
-			m_CurrentTetromino.posY += cell_size;
+			// inside this 0.6f block because cell size increases every 0.6 seconds.
+			m_CurrentTetromino.posY += m_CurrentTetromino.cell_size;
 		}
+		// if there is collision
 		else
 		{
 			if (!s_GameOver)
 			{
 				++points;
 				CommitBlock(m_CurrentTetromino);
-				app.GetSound().PlayLandedSound();
+				app.GetSound().Play("landed");
 				SpawnNextBlock();
 			}
 		}
 		m_LastTime = now;
 	}
-	// need to fix for the ybounds collision status
+
+	float time = (float)clock.getElapsedTime().asSeconds();
+	Timestep ts = time - m_LastFrameTime;// delta time
+	m_LastFrameTime = time;
+
+	m_Delay += ts.GetSeconds();
+
+	//std::cout << "Delat time: {0}s ({1}ms) " << ts.GetSeconds() << std::endl;
+
 	if (m_CurrentTetromino.YBoundsCollision())
 	{
-		// problem is here...
 		if (!s_GameOver)
 		{
 			++points;
 			CommitBlock(m_CurrentTetromino);
-			app.GetSound().PlayLandedSound();
-			SpawnNextBlock();
+			app.GetSound().Play("landed");
+			// need to delay spawning next block.
+			SpawnNextBlock();		
 		}
+	}
+
+	if (m_CurrentTetromino.XLeftBoundsCollision())
+	{
+		m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
+	}
+
+	if (m_CurrentTetromino.XRightBoundsCollision())
+	{
+		m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
 	}
 
 	m_BackButton->DrawButton(window);
@@ -336,7 +376,7 @@ void GameLayer::OnUpdate()
 	if (m_BackButton->m_buttonState == PRESSED)
 	{
 		std::cout << "[INFO] Back Button pressed" << std::endl;
-		app.GetSound().PlaySelectSound();
+		app.GetSound().Play("select");
 		s_GameOver = false;
 		app.SetLayer(new MainMenuLayer());
 	}
@@ -345,28 +385,28 @@ void GameLayer::OnUpdate()
 	{
 		if (!m_db_updated)
 		{
-			app.GetSound().PlayGameOverSound();
-			app.GetDatabase().InsertToScoreTable(s_Username, points);
+			app.GetSound().Play("game over");
+			app.GetDatabase().InsertToScoreTable(Application::s_Username, points);
 			app.GetDatabase().GetScoreList();
 			m_db_updated = true;
 		}
 
 		// draw game over
 		sf::Text text;
-		text.setFont(*s_Arcade_Font);
+		text.setFont(font);
 		text.setFillColor(sf::Color(254, 0, 2));
 		text.setCharacterSize(60);
 		text.setPosition(450, 50);
 		std::string string = "GAME OVER";
 		text.setString(string);
 		window.draw(text);
-		m_CurrentTetromino.m_color = sf::Color::Transparent;
 
+		m_CurrentTetromino.m_color = sf::Color::Transparent;
 		PaintGameBoardRed(window);
 
 		// draw score
 		sf::Text score_text;
-		score_text.setFont(*s_Arcade_Font);
+		score_text.setFont(font);
 		score_text.setFillColor(sf::Color::Yellow);
 		score_text.setCharacterSize(60);
 		score_text.setPosition(450, 150);
@@ -391,52 +431,67 @@ void GameLayer::OnEvent(sf::Event& event)
 	{
 		if (event.key.code == sf::Keyboard::Left)
 		{
-			m_CurrentTetromino.posX -= cell_size;
+			m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
 
-			if (m_CurrentTetromino.XBoundsCollision())
+			if (m_CurrentTetromino.XLeftBoundsCollision())
 			{
-				m_CurrentTetromino.posX += cell_size;
+				m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
 			}
 
 			if (m_CurrentTetromino.CollisionWithBlocks(0, 0))
 			{
-				m_CurrentTetromino.posX += cell_size;
+				m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
 			}
 		}
 
 		if (event.key.code == sf::Keyboard::Right)
 		{
-			m_CurrentTetromino.posX += cell_size;
+			m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
 
-			if (m_CurrentTetromino.XBoundsCollision())
+			if (m_CurrentTetromino.XRightBoundsCollision())
 			{
-				m_CurrentTetromino.posX -= cell_size;
+				m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
 			}
 
 			if (m_CurrentTetromino.CollisionWithBlocks(0, 0))
 			{
-				m_CurrentTetromino.posX -= cell_size;
+				m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
 			}
 		}
 
 		if (event.key.code == sf::Keyboard::Down)
 		{
-			m_CurrentTetromino.posY += cell_size;
+			m_CurrentTetromino.posY += m_CurrentTetromino.cell_size;
 
 			if (m_CurrentTetromino.YBoundsCollision())
 			{
-				m_CurrentTetromino.posY -= cell_size;
+				m_CurrentTetromino.posY -= m_CurrentTetromino.cell_size;
 			}
 
 			if (m_CurrentTetromino.CollisionWithBlocks(0, 0))
 			{
-				m_CurrentTetromino.posY -= cell_size;
+				m_CurrentTetromino.posY -= m_CurrentTetromino.cell_size;
 			}
 		}
 
 		if (event.key.code == sf::Keyboard::Up)
 		{
+			// if rotation will go outside the game board - what needs to be done??
+
 			m_CurrentTetromino.Rotate_HardCoded(m_CurrentTetromino.m_rotation_state);
+
+			if (m_CurrentTetromino.XLeftBoundsCollision())
+			{
+				m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
+				std::cout <<"x : " << m_CurrentTetromino.posX << std::endl;
+			}
+
+			if (m_CurrentTetromino.XRightBoundsCollision())
+			{
+				m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
+				std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
+
+			}
 		}
 
 		if (event.key.code == sf::Keyboard::Space)

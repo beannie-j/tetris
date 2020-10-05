@@ -1,7 +1,7 @@
 #include "TimerLayer.h"
 #include "GameLayer.h"
 
-#include "Application.h"
+#include "../../Tetris/src/Application.h"
 
 void TimerLayer::OnShutdown()
 {
@@ -35,14 +35,15 @@ void TimerLayer::OnEvent(sf::Event& event)
 void TimerLayer::OnInit()
 {
 	auto& app = Application::GetApplication();
-	app.GetSound().PlaySelectSound();
-	m_game_start_text.setFont(*s_Arcade_Font);
+	app.GetSound().Play("select");
+	sf::Font& font = app.GetFont();
+	m_game_start_text.setFont(font);
 	m_game_start_text.setFillColor(sf::Color(107, 133, 255));
 	m_game_start_text.setCharacterSize(50);
 	m_game_start_text.setPosition(200.f, 200.f);
 	m_game_start_text.setString("GAME STARTS IN...");
 
-	m_timer_text.setFont(*s_Arcade_Font);
+	m_timer_text.setFont(font);
 	m_timer_text.setFillColor(sf::Color(107, 133, 255));
 	m_timer_text.setCharacterSize(150);
 	m_timer_text.setPosition(500.f, 500.f);

@@ -1,8 +1,10 @@
 #pragma once
 #include "Layer.h"
+#include "../../Tetris/src/Tetromino.h"
+#include "../../util/src/Button.h"
 
-#include "Tetromino.h"
-#include "Button.h"
+#include <queue>
+
 
 class GameLayer : public Layer
 {
@@ -38,4 +40,10 @@ private:
 	Tetromino CreateTetromino(std::deque<int>& deque);
 	void CommitBlock(const Tetromino& tetromino);
 	void ClearRow(sf::RenderWindow& window);
+
+	static bool s_GameOver;
+
+	float m_LastFrameTime = 0.0f;
+
+	float m_Delay = 0.0f;
 };

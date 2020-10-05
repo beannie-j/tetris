@@ -1,9 +1,15 @@
 #include "Application.h"
-#include "MainMenuLayer.h"
-
-#include "Game.h"
+#include "../../Layers/src/MainMenuLayer.h"
+#include "SFML/Graphics.hpp"
+#include <string>
 
 static Application* s_Instance = nullptr;
+
+const float Application::block_size = 40.f;
+int Application::Window_Width = 30 * (int)block_size; 
+int Application::Window_Height = 30 * (int)block_size;
+int Application::s_shift = 7;
+std::string Application::s_Username = "";
 
 Application::Application(const std::string& name)
 {
@@ -54,7 +60,10 @@ void Application::Init()
     s_Window = new sf::RenderWindow(sf::VideoMode(Window_Width, Window_Height), "Tetris");
     // Initialize fonts
     s_Arcade_Font = new sf::Font();
-    s_Arcade_Font->loadFromFile("resources/prstart.ttf");
+    if (!s_Arcade_Font->loadFromFile("resources/prstart.ttf"))
+    {
+        s_Arcade_Font->loadFromFile("C:\\Windows\\Fonts\\Arial.ttf");
+    }
 
     s_Database = new Database();
     s_Database->OnInit();

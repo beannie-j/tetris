@@ -1,6 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "Game.h"
+#include <array>
 
 enum class RotationState : int {
     cw0 = 0, cw90 = 1, cw180 = 2, cw270 = 3
@@ -27,7 +27,9 @@ public:
     float posX = 3.0f;
     float posY = 0.f;
     sf::Color m_color;
-    //bool m_landed = false;
+
+    // make it const
+    float cell_size = 1.0f;
 
     Tetromino(TetrominoType type);
     void Draw(sf::RenderWindow& window);
@@ -35,8 +37,13 @@ public:
     bool CollisionWithBlocks(float dx, float dy);
     bool XBoundsCollision();
     bool YBoundsCollision();
+    bool Y1BoundsCollision();
     void Rotate_HardCoded(RotationState rotation_state);
+    bool TopBoundsCollision();
+    bool XLeftBoundsCollision();
+    bool XRightBoundsCollision();
     static constexpr float block_size = 40.f;
+    static sf::Color s_Colors[10];
 
     Tetromino() = default;
 

@@ -2,13 +2,14 @@
 #include "ScoreBoardLayer.h"
 #include "PreGameLayer.h"
 
-#include "Game.h"
-#include "Application.h"
+#include "../../Tetris/src/Application.h"
 
 void MainMenuLayer::OnInit()
 {
 	// load resources
-	m_Menu = std::make_unique<Menu>((float)Window_Width, (float)Window_Height - 200.f, *s_Arcade_Font);
+	auto& app = Application::GetApplication();
+	sf::Font& font = app.GetFont();
+	m_Menu = std::make_unique<Menu>((float)Application::Window_Width, (float)Application::Window_Height - 200.f, font);
 }
 
 void MainMenuLayer::OnShutdown()
@@ -20,11 +21,12 @@ void MainMenuLayer::OnUpdate()
 {
 	auto& app = Application::GetApplication();
 	sf::RenderWindow& window = app.GetWindow();
+	sf::Font& font = app.GetFont();
 
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
 	sf::Text arcade_game_title_text;
-	arcade_game_title_text.setFont(*s_Arcade_Font);
+	arcade_game_title_text.setFont(font);
 	arcade_game_title_text.setFillColor(sf::Color(255, 165, 0));
 	arcade_game_title_text.setCharacterSize(70);
 	arcade_game_title_text.setPosition(160, 50);
@@ -44,18 +46,18 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 		if (event.key.code == sf::Keyboard::Up)
 		{
 			m_Menu->MoveUp();
-			sound.PlayClickSound();
+			sound.Play("click");
 		}
 
 		if (event.key.code == sf::Keyboard::Down)
 		{
 			m_Menu->MoveDown();
-			sound.PlayClickSound();
+			sound.Play("click");
 		}
 
 		if (event.key.code == sf::Keyboard::Enter)
 		{
-			sound.PlaySelectSound();
+			sound.Play("select");
 			std::cout << "[Key] Enter\n";
 			switch (m_Menu->GetPressedItem())
 			{
@@ -63,12 +65,12 @@ void MainMenuLayer::OnEvent(sf::Event& event)
 				break;
 			case 0:
 				std::cout << "[Key] Play Button pressed\n";
-				sound.PlaySelectSound();
+				sound.Play("select");
 				app.SetLayer(new PreGameLayer());
 				break;
 			case 1:
 				std::cout << "[Key] Scores Button pressed\n";
-				sound.PlaySelectSound();
+				sound.Play("select");
 				app.SetLayer(new ScoreBoardLayer());
 				break;
 			case 2:
