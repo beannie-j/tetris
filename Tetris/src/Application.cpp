@@ -1,5 +1,5 @@
 #include "Application.h"
-#include "../../Layers/src/MainMenuLayer.h"
+#include "MainMenuLayer.h"
 #include "SFML/Graphics.hpp"
 #include <string>
 

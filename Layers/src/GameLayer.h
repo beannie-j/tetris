@@ -1,7 +1,7 @@
 #pragma once
 #include "Layer.h"
-#include "../../Tetris/src/Tetromino.h"
-#include "../../util/src/Button.h"
+#include "Tetromino.h"
+#include "Button.h"
 
 #include <queue>
 

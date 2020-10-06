@@ -1,6 +1,6 @@
 #include "ScoreBoardLayer.h"
 #include "MainMenuLayer.h"
-#include "../../Tetris/src/Application.h"
+#include "Application.h"
 
 
 void ScoreBoardLayer::OnInit()

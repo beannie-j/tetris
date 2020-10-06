@@ -6,15 +6,15 @@
 #include <typeinfo>
 
 #include "Tetromino.h"
-#include "../../util/src/Button.h"
-#include "../../util/src/Menu.h"
-#include "../../util/src/TextBox.h"
-#include "../../Layers/src/Layer.h"
+#include "Button.h"
+#include "Menu.h"
+#include "TextBox.h"
+#include "Layer.h"
 #include <sqlite3.h>
-#include "../../util/src/Database.h"
-#include "../../util/src/Sound.h"
+#include "Database.h"
+#include "Sound.h"
 #include "Application.h"
-#include "../../Layers/src/MainMenuLayer.h"
+#include "MainMenuLayer.h"
 
 int main()
 {

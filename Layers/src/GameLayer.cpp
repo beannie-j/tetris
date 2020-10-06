@@ -1,8 +1,8 @@
 #include "GameLayer.h"
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
-#include "../../Tetris/src/Application.h"
-#include "../../util/src/Timestep.h"
+#include "Application.h"
+#include "Timestep.h"
 
 bool GameLayer::s_GameOver = false;
 
@@ -490,7 +490,6 @@ void GameLayer::OnEvent(sf::Event& event)
 			{
 				m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
 				std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
-
 			}
 		}
 

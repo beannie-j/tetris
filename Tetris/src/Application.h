@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 #include <array>
-#include "../../Layers/src/Layer.h"
+#include "Layer.h"
 #include "SFML/Graphics.hpp"
 #include <SFML/Audio.hpp>
-#include "../../util/src/Database.h"
-#include "../../util/src/Sound.h"
+#include "Database.h"
+#include "Sound.h"
 
 struct GameBoard
 {

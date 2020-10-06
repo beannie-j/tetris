@@ -32,7 +32,10 @@ workspace "SFML-Tetris"
 		includedirs
 		{
 			"%{prj.location}/Dependencies/include",
-			"%{prj.location}/Dependencies/include/sqlite3"
+			"%{prj.location}/Dependencies/include/sqlite3",
+			"%{prj.location}/Tetris/src",
+			"%{prj.location}/Layers/src",
+			"%{prj.location}/util/src"
 		}
 
 		filter "system:windows"

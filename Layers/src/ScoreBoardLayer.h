@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Layer.h"
-#include "/Dev/Cpp/SFML-Tetris/util/src/Button.h"
+#include "Button.h"
+
 
 #include <SFML/Graphics.hpp>
 #include <memory>

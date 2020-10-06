@@ -34,7 +34,8 @@ Tetromino::Tetromino(TetrominoType type)
         m_color = sf::Color(237, 234, 59);
         break;
     case TetrominoType::T:
-        m_arr = { {{0,1,0,0}, {1,1,1,0}, {0,0,0,0}, {0,0,0,0}} };
+        m_arr = { {{0,1,0,0}, 
+            {1,1,1,0}, {0,0,0,0}, {0,0,0,0}} };
         m_rotation_state = RotationState::cw0;
         m_color = sf::Color(138, 43, 226);
         break;

@@ -1,7 +1,7 @@
 #pragma once
 #include "Layer.h"
 
-#include "../../util/src/Menu.h"
+#include "Menu.h"
 
 class MainMenuLayer : public Layer
 {
