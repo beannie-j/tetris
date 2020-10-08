@@ -1,8 +1,8 @@
 #include "GameLayer.h"
 #include "MainMenuLayer.h"
 #include "TimerLayer.h"
-#include "Application.h"
-#include "Timestep.h"
+#include "../../Tetris/src/Application.h"
+#include "../../util/src/Timestep.h"
 
 bool GameLayer::s_GameOver = false;
 
@@ -57,13 +57,13 @@ TetrominoType GameLayer::GetTypeFromNumeration(int number)
 {
 	switch (number)
 	{
-		case 0: return TetrominoType::I;
-		case 1: return TetrominoType::O;
-		case 2: return TetrominoType::T;
-		case 3: return TetrominoType::S;
-		case 4: return TetrominoType::Z;
-		case 5: return TetrominoType::J;
-		case 6: return TetrominoType::L;
+	case 0: return TetrominoType::I;
+	case 1: return TetrominoType::O;
+	case 2: return TetrominoType::T;
+	case 3: return TetrominoType::S;
+	case 4: return TetrominoType::Z;
+	case 5: return TetrominoType::J;
+	case 6: return TetrominoType::L;
 	}
 	//asert()
 	return TetrominoType::I;
@@ -273,6 +273,8 @@ void GameLayer::OnInit()
 	m_NextTetrominoBox.setSize(sf::Vector2f(300, 200));
 	m_NextTetrominoBox.setPosition(sf::Vector2f(750, 400));
 	m_NextTetrominoBox.setFillColor(sf::Color(128, 128, 128));
+
+	m_TimedFunctionQueue.push_back({ 2.0f, [&]() { std::cout << "Hello!\n"; } });
 }
 
 void GameLayer::OnShutdown()
@@ -314,7 +316,7 @@ void GameLayer::OnUpdate()
 
 	float now = clock.getElapsedTime().asSeconds();
 
-	if (now - m_LastTime >= 0.6f)
+	if (m_CanPlay && now - m_LastTime >= 0.6f)
 	{
 		// if no collision
 		if (!m_CurrentTetromino.CollisionWithBlocks(0, 1))
@@ -340,30 +342,52 @@ void GameLayer::OnUpdate()
 	Timestep ts = time - m_LastFrameTime;// delta time
 	m_LastFrameTime = time;
 
-	m_Delay += ts.GetSeconds();
-
-	//std::cout << "Delat time: {0}s ({1}ms) " << ts.GetSeconds() << std::endl;
-
-	if (m_CurrentTetromino.YBoundsCollision())
+	// Process timed functions
+	for (auto it = m_TimedFunctionQueue.begin(); it != m_TimedFunctionQueue.end(); )
 	{
-		if (!s_GameOver)
+		auto& tf = *it;
+		tf.Time -= ts;
+		if (tf.Time <= 0.0f)
 		{
-			++points;
-			CommitBlock(m_CurrentTetromino);
-			app.GetSound().Play("landed");
-			// need to delay spawning next block.
-			SpawnNextBlock();		
+			tf.Function();
+			it = m_TimedFunctionQueue.erase(it);
+		}
+		else
+		{
+			it++;
 		}
 	}
 
-	if (m_CurrentTetromino.XLeftBoundsCollision())
-	{
-		m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
-	}
+	//std::cout << "Delat time: {0}s ({1}ms) " << ts.GetSeconds() << std::endl;
 
-	if (m_CurrentTetromino.XRightBoundsCollision())
+	if (m_CanPlay)
 	{
-		m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
+		if (m_CurrentTetromino.YBoundsCollision())
+		{
+			if (!s_GameOver)
+			{
+				std::cout << "YBoundsCollision!\n";
+
+				++points;
+				CommitBlock(m_CurrentTetromino);
+				app.GetSound().Play("landed");
+				// need to delay spawning next block.
+				SpawnNextBlock();
+				m_CanPlay = false;
+				m_TimedFunctionQueue.push_back({ 0.6f, [&]() { m_CanPlay = true; } });
+			}
+		}
+
+
+		if (m_CurrentTetromino.XLeftBoundsCollision())
+		{
+			m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
+		}
+
+		if (m_CurrentTetromino.XRightBoundsCollision())
+		{
+			m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
+		}
 	}
 
 	m_BackButton->DrawButton(window);
@@ -483,13 +507,14 @@ void GameLayer::OnEvent(sf::Event& event)
 			if (m_CurrentTetromino.XLeftBoundsCollision())
 			{
 				m_CurrentTetromino.posX += m_CurrentTetromino.cell_size;
-				std::cout <<"x : " << m_CurrentTetromino.posX << std::endl;
+				std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
 			}
 
 			if (m_CurrentTetromino.XRightBoundsCollision())
 			{
 				m_CurrentTetromino.posX -= m_CurrentTetromino.cell_size;
 				std::cout << "x : " << m_CurrentTetromino.posX << std::endl;
+
 			}
 		}
 

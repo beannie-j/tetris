@@ -1,10 +1,10 @@
 #pragma once
 #include "Layer.h"
-#include "Tetromino.h"
-#include "Button.h"
+#include "../../Tetris/src/Tetromino.h"
+#include "../../util/src/Button.h"
 
 #include <queue>
-
+#include <functional>
 
 class GameLayer : public Layer
 {
@@ -16,19 +16,6 @@ public:
 	virtual void OnEvent(sf::Event& event) override;
 	void SpawnNextBlock();
 private:
-	Tetromino m_CurrentTetromino;
-	Tetromino m_NextTetromino;
-	std::deque<int> m_Tetromino_queue;
-
-	sf::Clock clock;
-	float m_LastTime = 0.0f;
-	int points = 0;
-	std::unique_ptr<Button> m_PlayAgainButton;
-	bool m_db_updated = false;
-	std::unique_ptr<Button> m_BackButton;
-	sf::Text m_NextTetrominoText;
-	sf::RectangleShape m_NextTetrominoBox;
-
 	void DrawUsername(sf::RenderWindow& window);
 	void DrawPoints(sf::RenderWindow& window, int points);
 	int GetColorInt(Tetromino tetromino);
@@ -40,10 +27,33 @@ private:
 	Tetromino CreateTetromino(std::deque<int>& deque);
 	void CommitBlock(const Tetromino& tetromino);
 	void ClearRow(sf::RenderWindow& window);
+private:
+	Tetromino m_CurrentTetromino;
+	Tetromino m_NextTetromino;
+	std::deque<int> m_Tetromino_queue;
 
-	static bool s_GameOver;
+	bool m_CanPlay = true;
+
+	struct TimedFunction
+	{
+		float Time = 0.0f;
+		std::function<void()> Function;
+	};
+
+	std::vector<TimedFunction> m_TimedFunctionQueue;
+
+	sf::Clock clock;
+	float m_LastTime = 0.0f;
+	int points = 0;
+	std::unique_ptr<Button> m_PlayAgainButton;
+	bool m_db_updated = false;
+	std::unique_ptr<Button> m_BackButton;
+	sf::Text m_NextTetrominoText;
+	sf::RectangleShape m_NextTetrominoBox;
 
 	float m_LastFrameTime = 0.0f;
 
 	float m_Delay = 0.0f;
+private:
+	static bool s_GameOver;
 };
