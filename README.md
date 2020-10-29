@@ -41,11 +41,11 @@ Main Menu and Timer before game starts.<br />
 ![](https://i.gyazo.com/dadd53e99f62da4509f0627a09831100.gif)<br />
 
 Score Board - Displays top player scores<br /><br />
-<img src="resources/score.png" width="200" height="200"><br />
+<img src="resources/score.png" width="500" height="500"><br />
 Game Play<br />
 ![](https://i.gyazo.com/4813285b10983cc4f709035086050354.gif)<br />
 Game Over<br />
-<img src="resources/gameover.png" width="200" height="200"><br />
+<img src="resources/gameover.png" width="500" height="500"><br />
 
 <!-- 
 <a href="https://gyazo.com/ef6e5ed429343cf3999e1669322c61c5"><img src="https://i.gyazo.com/ef6e5ed429343cf3999e1669322c61c5.gif" alt="Image from Gyazo" width="1800"/></a>
