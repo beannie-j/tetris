@@ -34,17 +34,17 @@
 This is a simple Tetris game. Play and have fun!
 
 
-Main Menu - Control with up and down arrow keys.
+Main Menu - Control with up and down arrow keys.<br />
 ![](https://i.gyazo.com/683d99633ca287cdbcdeec0cd2c349db.gif)
 
-Main Menu and Timer before game starts.
+Main Menu and Timer before game starts.<br />
 ![](https://i.gyazo.com/dadd53e99f62da4509f0627a09831100.gif)
 
-Score Board - Displays top player scores
+Score Board - Displays top player scores<br />
 ![](resources/score.png)
-Game Play
+Game Play<br />
 ![](https://i.gyazo.com/4813285b10983cc4f709035086050354.gif)
-Game Over
+Game Over<br />
 ![](resources/gameover.png)
 
 <!-- 
