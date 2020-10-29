@@ -6,7 +6,7 @@
     <img src="resources/tetris.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Path Finding Visualiser</h3>
+  <h3 align="center">Tetris Game</h3>
 
   <p>
   </p>
@@ -41,11 +41,11 @@ Main Menu and Timer before game starts.<br />
 ![](https://i.gyazo.com/dadd53e99f62da4509f0627a09831100.gif)<br />
 
 Score Board - Displays top player scores<br /><br />
-![](resources/score.png)
+![](resources/score.png){:height="36px" width="36px"}.
 Game Play<br />
 ![](https://i.gyazo.com/4813285b10983cc4f709035086050354.gif)<br />
 Game Over<br />
-![](resources/gameover.png)
+![](resources/gameover.png){:height="36px" width="36px"}.
 
 <!-- 
 <a href="https://gyazo.com/ef6e5ed429343cf3999e1669322c61c5"><img src="https://i.gyazo.com/ef6e5ed429343cf3999e1669322c61c5.gif" alt="Image from Gyazo" width="1800"/></a>
