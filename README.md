@@ -35,15 +35,15 @@ This is a simple Tetris game. Play and have fun!
 
 
 Main Menu - Control with up and down arrow keys.<br />
-![](https://i.gyazo.com/683d99633ca287cdbcdeec0cd2c349db.gif)
+![](https://i.gyazo.com/683d99633ca287cdbcdeec0cd2c349db.gif)<br />
 
 Main Menu and Timer before game starts.<br />
-![](https://i.gyazo.com/dadd53e99f62da4509f0627a09831100.gif)
+![](https://i.gyazo.com/dadd53e99f62da4509f0627a09831100.gif)<br />
 
-Score Board - Displays top player scores<br />
+Score Board - Displays top player scores<br /><br />
 ![](resources/score.png)
 Game Play<br />
-![](https://i.gyazo.com/4813285b10983cc4f709035086050354.gif)
+![](https://i.gyazo.com/4813285b10983cc4f709035086050354.gif)<br />
 Game Over<br />
 ![](resources/gameover.png)
 
